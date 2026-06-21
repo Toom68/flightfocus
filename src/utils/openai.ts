@@ -1,16 +1,8 @@
 import type { Airport } from '@/types/airport';
 
-const API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
-const MODEL = import.meta.env.VITE_OPENAI_MODEL || 'gpt-4o-mini';
-const ENDPOINT = 'https://api.openai.com/v1/chat/completions';
-
 export interface JournalGenerationResult {
   text: string;
   isFallback: boolean;
-}
-
-export function isLlmConfigured(): boolean {
-  return typeof API_KEY === 'string' && API_KEY.length > 20;
 }
 
 function durationFlavour(ambientMinutes: number): string {
@@ -69,62 +61,31 @@ export async function generateJournalEntry(
   to: Airport,
   ambientMinutes: number
 ): Promise<JournalGenerationResult> {
-  if (!isLlmConfigured()) {
-    return { text: fallbackJournalEntry(from, to, ambientMinutes), isFallback: true };
-  }
-
-  const prompt = [
-    `Write a short travel journal entry (3-4 evocative sentences, first person, past tense).`,
-    `The narrator is a quiet remote worker who set up with headphones in ${from.city}, ${from.country} —`,
-    `the kind of person who works from a cafe or hotel room and watches the city drift past.`,
-    `${durationFlavour(ambientMinutes)} They are now flying onward to ${to.city}, ${to.country}.`,
-    `Include exactly one specific sensory detail about ${from.city} — a smell, a sound, or a view from a window.`,
-    `Avoid cliches and tourist-brochure language. Do not mention work, laptops, or productivity directly.`,
-    `Keep it under 80 words. Return only the entry text, no title or quotation marks.`,
-  ].join(' ');
-
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 20000);
+    const timeout = setTimeout(() => controller.abort(), 25000);
 
-    const res = await fetch(ENDPOINT, {
+    const res = await fetch('/.netlify/functions/generate-journal', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${API_KEY}`,
       },
-      body: JSON.stringify({
-        model: MODEL,
-        messages: [
-          {
-            role: 'system',
-            content:
-              'You are a spare, literary travel diarist. You write brief, sensory, understated journal entries. No cliches, no exclamation marks, no lists.',
-          },
-          { role: 'user', content: prompt },
-        ],
-        max_tokens: 160,
-        temperature: 0.9,
-      }),
+      body: JSON.stringify({ from, to, ambientMinutes }),
       signal: controller.signal,
     });
 
     clearTimeout(timeout);
 
     if (!res.ok) {
-      throw new Error(`OpenAI ${res.status}`);
+      throw new Error(`Netlify function ${res.status}`);
     }
 
     const data = await res.json();
-    const text: string | undefined = data?.choices?.[0]?.message?.content?.trim();
-    if (!text) throw new Error('empty completion');
+    const text: string | undefined = data?.text;
+    if (!text) throw new Error('empty response');
 
-    return { text: stripWrappingQuotes(text), isFallback: false };
+    return { text, isFallback: data?.isFallback ?? false };
   } catch {
     return { text: fallbackJournalEntry(from, to, ambientMinutes), isFallback: true };
   }
-}
-
-function stripWrappingQuotes(s: string): string {
-  return s.replace(/^["'\u201c\u2018]+/, '').replace(/["'\u201d\u2019]+$/, '').trim();
 }
