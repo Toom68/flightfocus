@@ -143,7 +143,7 @@ export function WorldMapPicker({ from, onSelect, onClose }: WorldMapPickerProps)
         </div>
 
         {/* Map */}
-        <div className="relative flex-1 min-h-[48vh]">
+        <div className="relative h-[52vh] shrink-0">
           <MapContainer
             center={[from.lat, from.lng]}
             zoom={2}
