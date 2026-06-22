@@ -25,6 +25,13 @@ const dotIcon = L.divIcon({
   iconAnchor: [4, 4],
 });
 
+const regionalIcon = L.divIcon({
+  html: `<div style="width:5px;height:5px;background:#475569;border:1px solid #64748b;border-radius:50%;opacity:0.7;"></div>`,
+  className: 'ff-reg',
+  iconSize: [5, 5],
+  iconAnchor: [2.5, 2.5],
+});
+
 const fromIcon = L.divIcon({
   html: `<div style="width:16px;height:16px;background:#f59e0b;border:2px solid #fcd34d;border-radius:50%;box-shadow:0 0 10px rgba(245,158,11,0.7);"></div>`,
   className: 'ff-from',
@@ -172,7 +179,7 @@ export function WorldMapPicker({ from, onSelect, onClose }: WorldMapPickerProps)
                 <Marker
                   key={a.iata}
                   position={[a.lat, a.lng]}
-                  icon={isFrom ? fromIcon : isSel ? selectedIcon : dotIcon}
+                  icon={isFrom ? fromIcon : isSel ? selectedIcon : a.regional ? regionalIcon : dotIcon}
                   eventHandlers={{ click: () => { if (!isFrom) setSelected(a); } }}
                 >
                   <Tooltip direction="top" offset={[0, -8]} opacity={1} permanent={isFrom || isSel}>

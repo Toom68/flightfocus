@@ -180,6 +180,179 @@ export const CITY_SKETCHES: Record<string, string> = {
 <path d="M44 68 L44 36 Q60 22 76 36 L76 68" stroke="currentColor" stroke-width="1.3" fill="none"/>
 <path d="M52 68 L52 40 M68 68 L68 40" stroke="currentColor" stroke-width="0.9"/>
 <path d="M60 26 L60 20" stroke="currentColor" stroke-width="0.9"/>`,
+
+  // Naples — Vesuvius + bay
+  NAP: `${HORIZON}
+<path d="M20 60 L48 28 L76 60" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linejoin="round"/>
+<path d="M40 36 L48 28 L56 36" stroke="currentColor" stroke-width="1"/>
+<path d="M48 28 Q52 22 50 18 Q54 20 52 26" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M8 60 Q30 56 52 60 T96 60" stroke="currentColor" stroke-width="0.8" fill="none"/>`,
+
+  // Kraków — Wawel Castle
+  KRK: `${HORIZON}
+<rect x="38" y="44" width="8" height="24" stroke="currentColor" stroke-width="1"/>
+<rect x="48" y="38" width="10" height="30" stroke="currentColor" stroke-width="1.1"/>
+<rect x="60" y="44" width="8" height="24" stroke="currentColor" stroke-width="1"/>
+<path d="M48 38 L53 30 L58 38" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M53 30 L53 24" stroke="currentColor" stroke-width="0.9"/>`,
+
+  // Budapest — Parliament + Danube
+  BUD: `${HORIZON}
+<path d="M8 50 Q58 46 112 50" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<rect x="34" y="30" width="6" height="20" stroke="currentColor" stroke-width="0.9"/>
+<rect x="42" y="24" width="8" height="26" stroke="currentColor" stroke-width="1"/>
+<rect x="52" y="30" width="6" height="20" stroke="currentColor" stroke-width="0.9"/>
+<path d="M46 24 L46 18" stroke="currentColor" stroke-width="0.9"/>`,
+
+  // Lyon — river + rooftops
+  LYS: `${HORIZON}
+<path d="M10 52 Q40 48 58 52 Q80 56 110 50" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M40 48 L44 38 L48 48" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M72 48 L76 34 L80 48" stroke="currentColor" stroke-width="1" fill="none"/>`,
+
+  // Geneva — Jet d'Eau + lake
+  GVA: `${HORIZON}
+<path d="M6 54 Q58 50 112 54" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M58 54 L58 30 M58 30 Q54 24 56 18 M58 30 Q62 24 60 18" stroke="currentColor" stroke-width="1.1" fill="none"/>
+<path d="M58 18 L58 10" stroke="currentColor" stroke-width="1"/>`,
+
+  // Bilbao — Guggenheim curves
+  BIO: `${HORIZON}
+<path d="M30 60 Q40 38 54 48 Q66 56 78 42 Q90 34 96 52 L96 60" stroke="currentColor" stroke-width="1.2" fill="none"/>`,
+
+  // Porto — bridge + river
+  OPO: `${HORIZON}
+<path d="M6 48 Q58 44 112 48" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M30 48 L30 24 M82 48 L82 24" stroke="currentColor" stroke-width="1.2"/>
+<path d="M30 30 L82 30" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3"/>`,
+
+  // Hamburg — warehouse + crane
+  HAM: `${HORIZON}
+<path d="M6 54 Q58 50 112 54" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<rect x="34" y="40" width="10" height="14" stroke="currentColor" stroke-width="0.9"/>
+<rect x="46" y="40" width="10" height="14" stroke="currentColor" stroke-width="0.9"/>
+<path d="M80 54 L80 24 L92 24" stroke="currentColor" stroke-width="1" fill="none"/>`,
+
+  // Gothenburg — harbour crane
+  GOT: `${HORIZON}
+<path d="M6 54 Q58 50 112 54" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<rect x="36" y="42" width="8" height="12" stroke="currentColor" stroke-width="0.9"/>
+<path d="M72 54 L72 22 L86 22" stroke="currentColor" stroke-width="1" fill="none"/>`,
+
+  // Bergen — fjord + mountains
+  BGO: `${HORIZON}
+<path d="M6 60 L24 30 L42 56 L60 24 L80 56 L96 36 L112 60" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/>
+<path d="M6 60 Q58 56 112 60" stroke="currentColor" stroke-width="0.8" fill="none"/>`,
+
+  // Reykjavík — Hallgrímskirkja
+  KEF: `${HORIZON}
+<path d="M6 58 L30 32 L50 58" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M70 58 L70 18 M70 18 L64 24 M70 18 L76 24" stroke="currentColor" stroke-width="1.2"/>
+<path d="M66 30 L74 30 M68 40 L72 40" stroke="currentColor" stroke-width="0.8"/>`,
+
+  // Tbilisi — fortress + old town
+  TBS: `${HORIZON}
+<path d="M20 60 L20 34 L28 34 L28 60" stroke="currentColor" stroke-width="1" fill="none"/>
+<rect x="40" y="40" width="8" height="20" stroke="currentColor" stroke-width="0.9"/>
+<rect x="52" y="36" width="8" height="24" stroke="currentColor" stroke-width="0.9"/>
+<path d="M76 60 L76 30 L86 30 L86 60" stroke="currentColor" stroke-width="1" fill="none"/>`,
+
+  // Yerevan — Mount Ararat
+  EVN: `${HORIZON}
+<path d="M10 58 L50 22 L90 58" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linejoin="round"/>
+<path d="M42 30 L50 22 L58 30" stroke="currentColor" stroke-width="0.9"/>
+<path d="M30 58 L30 48 L40 48 L40 42 L50 42 L50 36 L60 36" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Malé — island + palm
+  MLE: `${HORIZON}
+<path d="M6 60 Q30 56 54 60 T102 60" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M48 60 L48 44 M48 44 Q42 40 38 44 M48 44 Q54 40 58 44" stroke="currentColor" stroke-width="1" fill="none"/>`,
+
+  // Busan — village + harbour
+  PUS: `${HORIZON}
+<path d="M6 54 Q58 50 112 54" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<rect x="28" y="40" width="6" height="14" stroke="currentColor" stroke-width="0.8"/>
+<rect x="36" y="36" width="6" height="18" stroke="currentColor" stroke-width="0.8"/>
+<rect x="44" y="42" width="6" height="12" stroke="currentColor" stroke-width="0.8"/>
+<path d="M76 54 L76 30 L88 30" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Osaka — Osaka Castle
+  KIX: `${HORIZON}
+<path d="M44 68 L44 40 Q54 28 64 40 L64 68" stroke="currentColor" stroke-width="1.2" fill="none"/>
+<path d="M44 40 L54 32 L64 40" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M54 32 L54 24" stroke="currentColor" stroke-width="0.9"/>`,
+
+  // Catania — Etna
+  CTA: `${HORIZON}
+<path d="M14 60 L42 24 L70 60" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linejoin="round"/>
+<path d="M36 32 L42 24 L48 32" stroke="currentColor" stroke-width="0.9"/>
+<path d="M42 24 Q46 18 44 14 Q48 16 46 22" stroke="currentColor" stroke-width="0.8" fill="none"/>`,
+
+  // Faro — lighthouse + coast
+  FAO: `${HORIZON}
+<path d="M6 60 Q30 56 54 60 T102 60" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M40 60 L40 34 M40 34 L34 28 L46 28 Z" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M40 28 L40 22" stroke="currentColor" stroke-width="0.9"/>`,
+
+  // Podgorica — river valley
+  TGD: `${HORIZON}
+<path d="M6 52 Q58 48 112 52" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M14 52 L24 36 L34 52" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M70 52 L82 32 L94 52" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Tallinn — medieval towers
+  TLL: `${HORIZON}
+<rect x="34" y="38" width="8" height="26" stroke="currentColor" stroke-width="0.9"/>
+<rect x="44" y="30" width="10" height="34" stroke="currentColor" stroke-width="1"/>
+<rect x="56" y="38" width="8" height="26" stroke="currentColor" stroke-width="0.9"/>
+<path d="M44 30 L49 22 L54 30" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M49 22 L49 16" stroke="currentColor" stroke-width="0.9"/>`,
+
+  // Riga — Art Nouveau spires
+  RIX: `${HORIZON}
+<rect x="36" y="40" width="8" height="24" stroke="currentColor" stroke-width="0.9"/>
+<rect x="48" y="32" width="10" height="32" stroke="currentColor" stroke-width="1"/>
+<rect x="62" y="40" width="8" height="24" stroke="currentColor" stroke-width="0.9"/>
+<path d="M48 32 L53 24 L58 32" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M53 24 L53 18" stroke="currentColor" stroke-width="0.9"/>`,
+
+  // Vilnius — church towers
+  VNO: `${HORIZON}
+<path d="M40 68 L40 36 Q48 26 56 36 L56 68" stroke="currentColor" stroke-width="1.1" fill="none"/>
+<path d="M48 26 L48 18" stroke="currentColor" stroke-width="0.9"/>
+<rect x="66" y="44" width="8" height="20" stroke="currentColor" stroke-width="0.9"/>`,
+
+  // Sofia — cathedral
+  SOF: `${HORIZON}
+<path d="M38 68 L38 42 Q50 28 62 42 L62 68" stroke="currentColor" stroke-width="1.2" fill="none"/>
+<path d="M38 42 L50 30 L62 42" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M50 30 L50 22" stroke="currentColor" stroke-width="0.9"/>`,
+
+  // Belgrade — fortress + rivers
+  BEG: `${HORIZON}
+<path d="M6 50 Q30 48 50 52 Q72 56 112 50" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<rect x="44" y="34" width="10" height="18" stroke="currentColor" stroke-width="1"/>
+<path d="M44 34 L49 26 L54 34" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M49 26 L49 20" stroke="currentColor" stroke-width="0.9"/>`,
+
+  // Zagreb — St Mark's
+  ZAG: `${HORIZON}
+<rect x="38" y="38" width="14" height="26" stroke="currentColor" stroke-width="1"/>
+<path d="M38 38 L45 30 L52 38" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M45 30 L45 24" stroke="currentColor" stroke-width="0.9"/>`,
+
+  // Dubrovnik — city walls + sea
+  DBV: `${HORIZON}
+<path d="M6 56 Q58 52 112 56" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M28 56 L28 36 L56 36 L56 56" stroke="currentColor" stroke-width="1.1" fill="none"/>
+<path d="M34 36 L34 28 L40 28 L40 36 M46 36 L46 28 L52 28 L52 36" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Split — Diocletian's Palace
+  SPU: `${HORIZON}
+<path d="M6 56 Q58 52 112 56" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<rect x="34" y="38" width="24" height="18" stroke="currentColor" stroke-width="1.1"/>
+<path d="M34 38 L46 28 L58 38" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M40 42 L40 56 M52 42 L52 56" stroke="currentColor" stroke-width="0.7"/>`,
 };
 
 // Secondary airports that share a city's sketch.

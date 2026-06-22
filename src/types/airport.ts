@@ -8,6 +8,7 @@ export interface Airport {
   lng: number;
   timezone: string;
   elevation?: number;
+  regional?: boolean; // true for smaller/regional airports (smaller map dot)
 }
 
 export interface AirportSearchResult {
