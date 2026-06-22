@@ -20,27 +20,36 @@ export function MusicPlayer() {
   const [collapsed, setCollapsed] = useState(false);
 
   const current = tracks[index];
+  const [buffering, setBuffering] = useState(false);
 
-  // Sync the <audio> element src with the current track.
+  // Single effect: sync src + drive play/pause together to avoid race conditions.
   useEffect(() => {
     const el = audioRef.current;
     if (!el || !current) return;
-    if (el.dataset.trackId !== current.id) {
+
+    const trackChanged = el.dataset.trackId !== current.id;
+    if (trackChanged) {
       el.src = current.streamUrl;
       el.dataset.trackId = current.id;
+      el.load(); // start buffering immediately
+      setBuffering(true);
     }
-  }, [current]);
 
-  // Drive play/pause from store state.
-  useEffect(() => {
-    const el = audioRef.current;
-    if (!el || !current) return;
     if (isPlaying) {
-      el.play().catch(() => { /* autoplay can be blocked until a user gesture */ });
+      const tryPlay = (retries = 3) => {
+        el.play().catch((err) => {
+          if (err.name === 'AbortError' && retries > 0) {
+            // Browser hasn't finished processing new src — retry shortly
+            setTimeout(() => tryPlay(retries - 1), 300);
+          }
+          // NotAllowedError = autoplay blocked; user needs to click play
+        });
+      };
+      tryPlay();
     } else {
       el.pause();
     }
-  }, [isPlaying, current]);
+  }, [current, isPlaying]);
 
   // Keep element volume in sync.
   useEffect(() => {
@@ -53,7 +62,14 @@ export function MusicPlayer() {
       animate={{ opacity: 1, y: 0 }}
       className="bg-cabin-panel/80 backdrop-blur-xl border border-gray-800 rounded-xl p-4"
     >
-      <audio ref={audioRef} onEnded={next} preload="none" />
+      <audio
+        ref={audioRef}
+        onEnded={next}
+        preload="auto"
+        onWaiting={() => setBuffering(true)}
+        onPlaying={() => setBuffering(false)}
+        onCanPlay={() => setBuffering(false)}
+      />
 
       <div className="flex items-center justify-between mb-3">
         <button onClick={() => setCollapsed((c) => !c)} className="flex items-center gap-2 group">
@@ -136,7 +152,7 @@ export function MusicPlayer() {
                     onClick={toggle}
                     className="w-9 h-9 rounded-full flex items-center justify-center bg-cabin-accent/20 text-cabin-accent hover:bg-cabin-accent/30 transition-colors"
                   >
-                    {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
+                    {buffering ? <Loader2 className="w-4 h-4 animate-spin" /> : isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
                   </button>
                   <button
                     onClick={next}
