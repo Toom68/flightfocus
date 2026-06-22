@@ -19,6 +19,20 @@ export interface NoiseChannelOptions {
   layers?: NoiseLayer[]; // extra summed noise layers (e.g. layered rain)
 }
 
+export interface SampleChannelOptions {
+  url: string;
+  lowpass?: number;   // optional lowpass cutoff (Hz)
+  highpass?: number;  // optional highpass cutoff (Hz)
+  q?: number;
+  pan?: number;       // -1 (left) .. 1 (right)
+  reverb?: boolean;   // route through a short convolution reverb
+}
+
+export interface OneShotOptions {
+  gain?: number;      // playback gain (0..1), default 1
+  pan?: number;       // -1 (left) .. 1 (right)
+}
+
 interface AudioChannelNode {
   sources: AudioBufferSourceNode[];
   modGain: GainNode;   // multiplicative slot for LFO + bumps (intrinsic 1.0)
@@ -39,6 +53,7 @@ export class AudioEngine {
   private compressor: DynamicsCompressorNode | null = null;
   private channels: Map<string, AudioChannelNode> = new Map();
   private reverbIR: AudioBuffer | null = null;
+  private sampleBuffers: Map<string, AudioBuffer> = new Map();
 
   async initialize(): Promise<void> {
     if (this.context) return;
@@ -252,6 +267,124 @@ export class AudioEngine {
     this.channels.set(id, channel);
   }
 
+  /**
+   * Fetch + decode an audio file, caching the decoded buffer by URL.
+   * Returns null on any failure (missing file, network block, decode error).
+   */
+  private async loadSampleBuffer(url: string): Promise<AudioBuffer | null> {
+    if (!this.context) return null;
+    const cached = this.sampleBuffers.get(url);
+    if (cached) return cached;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) return null;
+      const arr = await res.arrayBuffer();
+      const buffer = await this.context.decodeAudioData(arr);
+      this.sampleBuffers.set(url, buffer);
+      return buffer;
+    } catch {
+      return null;
+    }
+  }
+
+  /** Preload a one-shot/sample file so the first trigger is gap-free. */
+  async loadSample(url: string): Promise<boolean> {
+    return (await this.loadSampleBuffer(url)) !== null;
+  }
+
+  /**
+   * Create a looping sample-backed channel that shares the same routing as
+   * noise channels (modGain -> [reverb] -> panner -> gain -> master), so all
+   * existing volume / pan / filter / bump controls work unchanged.
+   * Returns false if the sample could not be loaded (caller can fall back).
+   */
+  async createSampleChannel(id: string, opts: SampleChannelOptions): Promise<boolean> {
+    if (!this.context || !this.masterGain) return false;
+    const buffer = await this.loadSampleBuffer(opts.url);
+    if (!buffer) return false;
+    const ctx = this.context;
+
+    const gain = ctx.createGain();
+    gain.gain.value = 0;
+
+    const panner = ctx.createStereoPanner();
+    panner.pan.value = opts.pan ?? 0;
+
+    const modGain = ctx.createGain();
+    modGain.gain.value = 1;
+
+    if (opts.reverb && this.reverbIR) {
+      const convolver = ctx.createConvolver();
+      convolver.buffer = this.reverbIR;
+      const wet = ctx.createGain();
+      wet.gain.value = 0.5;
+      const dry = ctx.createGain();
+      dry.gain.value = 0.7;
+      modGain.connect(dry);
+      modGain.connect(convolver);
+      convolver.connect(wet);
+      dry.connect(panner);
+      wet.connect(panner);
+    } else {
+      modGain.connect(panner);
+    }
+    panner.connect(gain);
+    gain.connect(this.masterGain);
+
+    const lowpass = ctx.createBiquadFilter();
+    lowpass.type = 'lowpass';
+    lowpass.frequency.value = opts.lowpass ?? 20000;
+    lowpass.Q.value = opts.q ?? 0.6;
+
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+    src.loop = true;
+
+    let head: AudioNode = src;
+    if (opts.highpass) {
+      const hp = ctx.createBiquadFilter();
+      hp.type = 'highpass';
+      hp.frequency.value = opts.highpass;
+      head.connect(hp);
+      head = hp;
+    }
+    head.connect(lowpass);
+    lowpass.connect(modGain);
+
+    src.start();
+    this.channels.set(id, { sources: [src], modGain, panner, gain, lowpass, volume: 0 });
+    return true;
+  }
+
+  /**
+   * Play a one-shot sample (chime, takeoff, landing, thunder crack) routed
+   * straight to the master bus. No-op if the sample isn't available.
+   */
+  async playOneShot(url: string, opts: OneShotOptions = {}): Promise<void> {
+    if (!this.context || !this.masterGain) return;
+    const buffer = await this.loadSampleBuffer(url);
+    if (!buffer) return;
+    const ctx = this.context;
+
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+
+    const g = ctx.createGain();
+    g.gain.value = opts.gain ?? 1;
+
+    const panner = ctx.createStereoPanner();
+    panner.pan.value = opts.pan ?? 0;
+
+    src.connect(g);
+    g.connect(panner);
+    panner.connect(this.masterGain);
+
+    src.onended = () => {
+      try { src.disconnect(); g.disconnect(); panner.disconnect(); } catch { /* noop */ }
+    };
+    src.start();
+  }
+
   setChannelVolume(id: string, volume: number, fadeTime = 0.5): void {
     const ch = this.channels.get(id);
     if (!ch || !this.context) return;
@@ -323,6 +456,7 @@ export class AudioEngine {
       try { ch.lfo?.stop(); } catch { /* noop */ }
     });
     this.channels.clear();
+    this.sampleBuffers.clear();
     this.context?.close();
     this.context = null;
   }

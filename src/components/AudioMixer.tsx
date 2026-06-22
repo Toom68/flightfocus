@@ -3,7 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Volume2, VolumeX, ChevronDown, Sparkles, Headphones, Moon, CloudRain, PlaneTakeoff, Wand2,
 } from 'lucide-react';
-import { useAudioStore, CHANNEL_ENGINE_OPTIONS, AUDIO_PRESETS } from '@/store/audioStore';
+import {
+  useAudioStore, CHANNEL_ENGINE_OPTIONS, AUDIO_PRESETS,
+  SAMPLE_LOOP_OPTIONS, SAMPLE_FALLBACK_NOISE, ONE_SHOT_SAMPLES,
+} from '@/store/audioStore';
 import { useFlightStore } from '@/store/flightStore';
 import { audioEngine } from '@/utils/audio';
 import type { AudioChannel, AudioPreset } from '@/types/simulation';
@@ -59,16 +62,74 @@ export function AudioMixer() {
     const init = async () => {
       await audioEngine.initialize();
       if (cancelled) return;
+      // Synthesized noise channels (wind, cabin, hvac, turbulence, pressure).
       for (const [id, opts] of Object.entries(CHANNEL_ENGINE_OPTIONS)) {
         if (!audioEngine.hasChannel(id)) audioEngine.createNoiseChannel(id, opts);
       }
+      // Looping sample channels (engine, boarding, rain) — fall back to noise on failure.
+      for (const [id, opts] of Object.entries(SAMPLE_LOOP_OPTIONS)) {
+        if (audioEngine.hasChannel(id)) continue;
+        const ok = await audioEngine.createSampleChannel(id, opts);
+        if (cancelled) return;
+        if (!ok && SAMPLE_FALLBACK_NOISE[id]) {
+          audioEngine.createNoiseChannel(id, SAMPLE_FALLBACK_NOISE[id]);
+        }
+      }
+      // Preload one-shots so the first chime/takeoff/landing/thunder is gap-free.
+      Object.values(ONE_SHOT_SAMPLES).forEach((url) => { void audioEngine.loadSample(url); });
       audioEngine.scheduleRandomBumps('turbulence', 7000, 24000, 1.9);
-      audioEngine.scheduleRandomBumps('thunder', 12000, 40000, 2.4);
       setInitialized(true);
     };
     init();
     return () => { cancelled = true; };
   }, [isInitialized, setInitialized]);
+
+  // Cabin chimes + takeoff/landing one-shots fired on phase transitions.
+  const prevPhaseRef = useRef<FlightPhase | null>(null);
+  useEffect(() => {
+    if (!isInitialized) {
+      prevPhaseRef.current = phase;
+      return;
+    }
+    const prev = prevPhaseRef.current;
+    prevPhaseRef.current = phase;
+    if (!isActive || prev === null || prev === phase) return;
+
+    const vol = Math.max(0.25, masterVolume);
+    audioEngine.resume();
+
+    if (phase === 'TAKEOFF') {
+      // Seatbelt chime after taxi, then the takeoff roll.
+      void audioEngine.playOneShot(ONE_SHOT_SAMPLES.chime, { gain: vol });
+      window.setTimeout(() => audioEngine.playOneShot(ONE_SHOT_SAMPLES.takeoff, { gain: vol }), 1300);
+    } else if (phase === 'DESCENT') {
+      // "Beginning descent" chime.
+      void audioEngine.playOneShot(ONE_SHOT_SAMPLES.chime, { gain: vol });
+    } else if (phase === 'LANDING') {
+      // Actual landing.
+      void audioEngine.playOneShot(ONE_SHOT_SAMPLES.landing, { gain: vol });
+    }
+  }, [phase, isActive, isInitialized, masterVolume]);
+
+  // Distant-thunder one-shots, scheduled randomly while the Thunder channel is audible.
+  useEffect(() => {
+    if (!isInitialized) return;
+    let timer: ReturnType<typeof setTimeout>;
+    const arm = () => {
+      const wait = 14000 + Math.random() * 32000;
+      timer = setTimeout(() => {
+        const state = useAudioStore.getState();
+        const thunderCh = state.channels.find((c) => c.id === 'thunder');
+        const eff = thunderCh && !thunderCh.isMuted ? thunderCh.volume * state.masterVolume : 0;
+        if (eff > 0.01) {
+          void audioEngine.playOneShot(ONE_SHOT_SAMPLES.thunder, { gain: Math.min(1, eff * 1.2) });
+        }
+        arm();
+      }, wait);
+    };
+    arm();
+    return () => clearTimeout(timer);
+  }, [isInitialized]);
 
   // Push channel volumes / mutes to the engine whenever they change.
   useEffect(() => {

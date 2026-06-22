@@ -1,13 +1,34 @@
 import { create } from 'zustand';
 import type { AudioChannel, AudioPreset } from '@/types/simulation';
-import type { NoiseChannelOptions } from '@/utils/audio';
+import type { NoiseChannelOptions, SampleChannelOptions } from '@/utils/audio';
 
-// Engine-construction options for each channel (used once on init).
+// Synthesized noise channels (constructed once on init).
 export const CHANNEL_ENGINE_OPTIONS: Record<string, NoiseChannelOptions> = {
-  engine: { type: 'brown', lowpass: 200, highpass: 40, pan: -0.15, lfoRate: 0.08, lfoDepth: 0.08 },
   wind: { type: 'pink', lowpass: 6000, highpass: 2000, pan: 0.2, lfoRate: 0.12, lfoDepth: 0.06 },
   cabin: { type: 'pink', lowpass: 1200, pan: 0, reverb: true },
   hvac: { type: 'white', lowpass: 3000, pan: 0.1, lfoRate: 0.05, lfoDepth: 0.05 },
+  // Turbulence now carries a sub-bass rumble layer (~70 Hz) for deeper, lower-freq motion.
+  turbulence: {
+    type: 'brown',
+    lowpass: 150,
+    pan: 0,
+    lfoRate: 0.5,
+    lfoDepth: 0.25,
+    layers: [{ type: 'brown', lowpass: 70, gain: 0.85 }],
+  },
+  pressure: { type: 'pink', lowpass: 700, highpass: 200, pan: 0 },
+};
+
+// Looping sample-backed channels (real recordings). Fall back to noise if a file fails to load.
+export const SAMPLE_LOOP_OPTIONS: Record<string, SampleChannelOptions> = {
+  engine: { url: '/audio/engine.mp3', lowpass: 16000, pan: -0.15 },
+  boarding: { url: '/audio/boarding.mp3', pan: -0.05 },
+  rain: { url: '/audio/rain.mp3', pan: 0 },
+};
+
+// Synthesized fallbacks used only if the matching sample file can't be loaded.
+export const SAMPLE_FALLBACK_NOISE: Record<string, NoiseChannelOptions> = {
+  engine: { type: 'brown', lowpass: 200, highpass: 40, pan: -0.15, lfoRate: 0.08, lfoDepth: 0.08 },
   boarding: { type: 'pink', lowpass: 2000, pan: -0.05 },
   rain: {
     type: 'pink',
@@ -16,10 +37,15 @@ export const CHANNEL_ENGINE_OPTIONS: Record<string, NoiseChannelOptions> = {
     pan: 0,
     layers: [{ type: 'pink', lowpass: 500, gain: 0.6 }],
   },
-  thunder: { type: 'brown', lowpass: 90, pan: 0 },
-  turbulence: { type: 'brown', lowpass: 150, pan: 0, lfoRate: 0.5, lfoDepth: 0.25 },
-  pressure: { type: 'pink', lowpass: 700, highpass: 200, pan: 0 },
 };
+
+// One-shot sample files (played on phase transitions / scheduled events).
+export const ONE_SHOT_SAMPLES = {
+  chime: '/audio/chime.mp3',
+  takeoff: '/audio/takeoff.mp3',
+  landing: '/audio/landing.mp3',
+  thunder: '/audio/thunder.mp3',
+} as const;
 
 const defaultChannels: AudioChannel[] = [
   { id: 'engine', name: 'Engine', volume: 0.6, isMuted: false, isPlaying: true, category: 'engine', hasLfo: true },

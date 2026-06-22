@@ -119,36 +119,46 @@ export function generateRoutePoints(
   return points;
 }
 
+// Airborne flight time only (taxi/takeoff are a separate fixed ground sequence,
+// so they no longer consume flight time or great-circle distance).
 export function estimateFlightDuration(distanceKm: number): number {
   const cruiseSpeedKmh = 870;
-  const taxiTimeMin = 15;
   const climbTimeMin = 20;
   const descentTimeMin = 25;
 
   const cruiseDistanceKm = Math.max(0, distanceKm - 200);
   const cruiseTimeMin = (cruiseDistanceKm / cruiseSpeedKmh) * 60;
 
-  return (taxiTimeMin + climbTimeMin + cruiseTimeMin + descentTimeMin) * 60;
+  return (climbTimeMin + cruiseTimeMin + descentTimeMin) * 60;
 }
 
+// Altitude keyed off AIRBORNE progress (0 = start of climb, 1 = arrival).
 export function getAltitudeForProgress(progress: number): number {
   const cruiseAltitudeFt = 36000;
 
-  if (progress < 0.02) return 0;
-  if (progress < 0.05) return ((progress - 0.02) / 0.03) * 10000;
-  if (progress < 0.15) return 10000 + ((progress - 0.05) / 0.10) * 26000;
-  if (progress < 0.80) return cruiseAltitudeFt;
-  if (progress < 0.92) return cruiseAltitudeFt * (1 - (progress - 0.80) / 0.12) + 10000 * ((progress - 0.80) / 0.12);
-  if (progress < 0.98) return 10000 * (1 - (progress - 0.92) / 0.06);
+  if (progress <= 0) return 0;
+  // CLIMB: 0 -> 0.15, ground to cruise altitude
+  if (progress < 0.04) return (progress / 0.04) * 10000;
+  if (progress < 0.15) return 10000 + ((progress - 0.04) / 0.11) * 26000;
+  // CRUISE: 0.15 -> 0.85
+  if (progress < 0.85) return cruiseAltitudeFt;
+  // DESCENT: 0.85 -> 0.95, cruise -> 10000
+  if (progress < 0.95) return cruiseAltitudeFt - ((progress - 0.85) / 0.10) * 26000;
+  // APPROACH/LANDING: 0.95 -> 1.0, 10000 -> 0
+  if (progress < 1) return 10000 * (1 - (progress - 0.95) / 0.05);
   return 0;
 }
 
+// Speed (knots) keyed off AIRBORNE progress.
 export function getSpeedForProgress(progress: number): number {
-  if (progress < 0.02) return 20;
-  if (progress < 0.04) return 20 + (progress - 0.02) / 0.02 * 130;
-  if (progress < 0.15) return 250 + (progress - 0.04) / 0.11 * 230;
-  if (progress < 0.80) return 480;
-  if (progress < 0.92) return 480 - (progress - 0.80) / 0.12 * 230;
-  if (progress < 0.98) return 250 - (progress - 0.92) / 0.06 * 100;
-  return 150 - (progress - 0.98) / 0.02 * 130;
+  if (progress <= 0) return 160;
+  // CLIMB accelerate to cruise speed
+  if (progress < 0.15) return 250 + (progress / 0.15) * 230;
+  // CRUISE
+  if (progress < 0.85) return 480;
+  // DESCENT
+  if (progress < 0.95) return 480 - ((progress - 0.85) / 0.10) * 230;
+  // APPROACH/LANDING decel to touchdown
+  if (progress < 1) return 250 - ((progress - 0.95) / 0.05) * 110;
+  return 140;
 }

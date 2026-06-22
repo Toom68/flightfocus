@@ -1,39 +1,72 @@
 import type { FlightPhase, PhaseConfig } from '@/types/flight';
 
+/**
+ * Ground sequence: fixed REAL-TIME (unscaled) durations that play out at the
+ * departure airport before the flight clock starts. The aircraft does not move
+ * geographically during these phases — `progress` stays at 0 until takeoff
+ * completes (this fixes the old "81 km on the runway" bug where ground phases
+ * consumed a fraction of the great-circle route).
+ */
+export const GROUND_DURATIONS: Record<'BOARDING' | 'TAXI' | 'TAKEOFF', number> = {
+  BOARDING: 25,
+  TAXI: 30,
+  TAKEOFF: 15,
+};
+
+export const GROUND_TOTAL_SECONDS =
+  GROUND_DURATIONS.BOARDING + GROUND_DURATIONS.TAXI + GROUND_DURATIONS.TAKEOFF;
+
+/** Notional in-world time the ground ritual represents (for the day/night clock). */
+export const GROUND_WORLD_SECONDS = 1800; // 30 min
+
+/**
+ * Airborne phases keyed off airborne progress (0 = start of climb at takeoff
+ * completion, 1 = arrival). Ground phases are NOT in this table — they're driven
+ * by the real-time ground clock in the flight store.
+ */
 export const PHASE_CONFIGS: PhaseConfig[] = [
-  { phase: 'BOARDING', durationFraction: 0.00, altitudeStart: 0, altitudeEnd: 0, speedKnots: 0, progressStart: 0, progressEnd: 0 },
-  { phase: 'TAXI', durationFraction: 0.03, altitudeStart: 0, altitudeEnd: 0, speedKnots: 20, progressStart: 0, progressEnd: 0.01 },
-  { phase: 'TAKEOFF', durationFraction: 0.02, altitudeStart: 0, altitudeEnd: 5000, speedKnots: 160, progressStart: 0.01, progressEnd: 0.03 },
-  { phase: 'CLIMB', durationFraction: 0.12, altitudeStart: 5000, altitudeEnd: 36000, speedKnots: 350, progressStart: 0.03, progressEnd: 0.15 },
-  { phase: 'CRUISE', durationFraction: 0.60, altitudeStart: 36000, altitudeEnd: 36000, speedKnots: 480, progressStart: 0.15, progressEnd: 0.80 },
-  { phase: 'DESCENT', durationFraction: 0.12, altitudeStart: 36000, altitudeEnd: 10000, speedKnots: 300, progressStart: 0.80, progressEnd: 0.92 },
-  { phase: 'APPROACH', durationFraction: 0.07, altitudeStart: 10000, altitudeEnd: 2000, speedKnots: 180, progressStart: 0.92, progressEnd: 0.97 },
-  { phase: 'LANDING', durationFraction: 0.02, altitudeStart: 2000, altitudeEnd: 0, speedKnots: 140, progressStart: 0.97, progressEnd: 0.99 },
-  { phase: 'ARRIVED', durationFraction: 0.02, altitudeStart: 0, altitudeEnd: 0, speedKnots: 0, progressStart: 0.99, progressEnd: 1.0 },
+  { phase: 'CLIMB', durationFraction: 0.15, altitudeStart: 0, altitudeEnd: 36000, speedKnots: 350, progressStart: 0.00, progressEnd: 0.15 },
+  { phase: 'CRUISE', durationFraction: 0.70, altitudeStart: 36000, altitudeEnd: 36000, speedKnots: 480, progressStart: 0.15, progressEnd: 0.85 },
+  { phase: 'DESCENT', durationFraction: 0.10, altitudeStart: 36000, altitudeEnd: 10000, speedKnots: 300, progressStart: 0.85, progressEnd: 0.95 },
+  { phase: 'APPROACH', durationFraction: 0.04, altitudeStart: 10000, altitudeEnd: 2000, speedKnots: 180, progressStart: 0.95, progressEnd: 0.99 },
+  { phase: 'LANDING', durationFraction: 0.01, altitudeStart: 2000, altitudeEnd: 0, speedKnots: 140, progressStart: 0.99, progressEnd: 1.0 },
 ];
 
+/** Resolve the current ground phase from elapsed real seconds, or null once airborne. */
+export function getGroundPhase(groundElapsedSeconds: number): FlightPhase | null {
+  if (groundElapsedSeconds < GROUND_DURATIONS.BOARDING) return 'BOARDING';
+  if (groundElapsedSeconds < GROUND_DURATIONS.BOARDING + GROUND_DURATIONS.TAXI) return 'TAXI';
+  if (groundElapsedSeconds < GROUND_TOTAL_SECONDS) return 'TAKEOFF';
+  return null;
+}
+
+/** Ground speed (knots) ramp across taxi/takeoff for display. */
+export function getGroundSpeed(groundElapsedSeconds: number): number {
+  const phase = getGroundPhase(groundElapsedSeconds);
+  if (phase === 'BOARDING') return 0;
+  if (phase === 'TAXI') return 20;
+  if (phase === 'TAKEOFF') {
+    // accelerate from 20 -> ~160 kts across the takeoff roll
+    const takeoffStart = GROUND_DURATIONS.BOARDING + GROUND_DURATIONS.TAXI;
+    const f = Math.min(1, (groundElapsedSeconds - takeoffStart) / GROUND_DURATIONS.TAKEOFF);
+    return 20 + f * 140;
+  }
+  return 0;
+}
+
+/** Airborne phase for the given airborne progress (0..1). */
 export function getPhaseForProgress(progress: number): FlightPhase {
+  if (progress >= 1) return 'ARRIVED';
   for (let i = PHASE_CONFIGS.length - 1; i >= 0; i--) {
     if (progress >= PHASE_CONFIGS[i].progressStart) {
       return PHASE_CONFIGS[i].phase;
     }
   }
-  return 'BOARDING';
+  return 'CLIMB';
 }
 
 export function getPhaseConfig(phase: FlightPhase): PhaseConfig {
   return PHASE_CONFIGS.find(c => c.phase === phase) || PHASE_CONFIGS[0];
-}
-
-export function getProgressForElapsedTime(
-  elapsedSeconds: number,
-  totalDuration: number,
-  boardingDuration: number = 120
-): number {
-  if (elapsedSeconds <= boardingDuration) return 0;
-  const flightElapsed = elapsedSeconds - boardingDuration;
-  const flightDuration = totalDuration;
-  return Math.min(1, flightElapsed / flightDuration);
 }
 
 export function getPhaseDescription(phase: FlightPhase): string {

@@ -3,7 +3,13 @@ import type { Airport } from '@/types/airport';
 import type { FlightPhase, FlightRoute, FlightPosition } from '@/types/flight';
 import type { ViewMode } from '@/types/simulation';
 import { generateFlightRoute, getPositionAtProgress } from '@/engine/route';
-import { getPhaseForProgress, getProgressForElapsedTime } from '@/engine/simulation';
+import {
+  getPhaseForProgress,
+  getGroundPhase,
+  getGroundSpeed,
+  GROUND_TOTAL_SECONDS,
+  GROUND_WORLD_SECONDS,
+} from '@/engine/simulation';
 import { getAltitudeForProgress, getSpeedForProgress } from '@/engine/navigation';
 import { getTimezoneOffsetMs, getLocalHourInTimezone } from '@/utils/time';
 
@@ -21,7 +27,7 @@ interface FlightStore {
   isPaused: boolean;
   timeScale: number;
   viewMode: ViewMode;
-  boardingDuration: number;
+  groundElapsed: number;        // real (unscaled) seconds elapsed in the ground sequence
   timeMode: TimeMode;
   departureTimeUTC: number;
   customHour: number;
@@ -58,7 +64,7 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
   isPaused: false,
   timeScale: 60,
   viewMode: 'home',
-  boardingDuration: 120,
+  groundElapsed: 0,
   timeMode: 'realtime',
   departureTimeUTC: Date.now(),
   customHour: 10,
@@ -101,6 +107,7 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
       viewMode: 'simulation',
       departureTimeUTC: departureUTC,
       simulationDate: new Date(departureUTC),
+      groundElapsed: 0,
       sessionRealSeconds: 0,
       cruiseRealSeconds: 0,
       departedLocalHour: getLocalHourInTimezone(new Date(departureUTC), departure.timezone),
@@ -132,6 +139,7 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
     isPaused: false,
     viewMode: 'grounded',
     simulationDate: new Date(),
+    groundElapsed: 0,
     sessionRealSeconds: 0,
     cruiseRealSeconds: 0,
     departedLocalHour: null,
@@ -147,6 +155,7 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
     isActive: false,
     isPaused: false,
     viewMode: 'grounded',
+    groundElapsed: 0,
     sessionRealSeconds: 0,
     cruiseRealSeconds: 0,
     departedLocalHour: null,
@@ -159,16 +168,54 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
   setCustomHour: (hour) => set({ customHour: hour }),
 
   tick: (deltaSeconds) => {
-    const { isActive, isPaused, timeScale, elapsedTime, route, boardingDuration, sessionRealSeconds, cruiseRealSeconds } = get();
+    const {
+      isActive, isPaused, timeScale, elapsedTime, route,
+      groundElapsed, sessionRealSeconds, cruiseRealSeconds, departureTimeUTC,
+    } = get();
     if (!isActive || isPaused || !route) return;
 
+    // Real (unscaled) wall-clock time the sim has been running this leg.
+    const newSessionReal = sessionRealSeconds + deltaSeconds;
+
+    // --- Ground sequence (boarding -> taxi -> takeoff) -------------------
+    // Runs in REAL time, unaffected by timeScale. The aircraft stays parked at
+    // the departure point: progress stays 0, so no great-circle movement.
+    if (groundElapsed < GROUND_TOTAL_SECONDS) {
+      const newGround = Math.min(GROUND_TOTAL_SECONDS, groundElapsed + deltaSeconds);
+      const phase = getGroundPhase(newGround) ?? 'TAKEOFF';
+      const speed = getGroundSpeed(newGround);
+      // Day/night clock advances through the notional ground-world duration.
+      const simDate = new Date(
+        departureTimeUTC + (newGround / GROUND_TOTAL_SECONDS) * GROUND_WORLD_SECONDS * 1000
+      );
+
+      set({
+        groundElapsed: newGround,
+        phase,
+        progress: 0,
+        elapsedTime: 0,
+        simulationDate: simDate,
+        sessionRealSeconds: newSessionReal,
+        position: {
+          lat: route.departure.lat,
+          lng: route.departure.lng,
+          altitude: 0,
+          speed,
+          heading: route.bearing,
+          progress: 0,
+          distanceRemaining: route.distance,
+          timeRemaining: route.duration,
+        },
+      });
+      return;
+    }
+
+    // --- Airborne (flight clock starts here, scaled by timeScale) --------
     const scaledDelta = deltaSeconds * timeScale;
     const newElapsed = elapsedTime + scaledDelta;
-    const progress = getProgressForElapsedTime(newElapsed, route.duration, boardingDuration);
+    const progress = Math.min(1, newElapsed / route.duration);
     const phase = getPhaseForProgress(progress);
 
-    // Accumulate REAL (unscaled) wall-clock time the sim has been running this leg.
-    const newSessionReal = sessionRealSeconds + deltaSeconds;
     const newCruiseReal = phase === 'CRUISE' ? cruiseRealSeconds + deltaSeconds : cruiseRealSeconds;
 
     const routePoint = getPositionAtProgress(route, progress);
@@ -176,15 +223,12 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
     const speed = getSpeedForProgress(progress);
 
     const distanceRemaining = route.distance * (1 - progress);
-    const timeRemaining = Math.max(0, route.duration - (newElapsed - boardingDuration));
+    const timeRemaining = Math.max(0, route.duration - newElapsed);
 
-    // Calculate the real-world time at the aircraft position
-    // elapsedTime is in sim-seconds but route.duration is the real flight duration in seconds
-    // progress maps linearly to real flight time
-    const { departureTimeUTC, boardingDuration: bd } = get();
-    const realFlightElapsed = progress * route.duration; // seconds of real flight time elapsed
-    const realTotalElapsed = bd + realFlightElapsed; // include boarding time as real time
-    const simDate = new Date(departureTimeUTC + realTotalElapsed * 1000);
+    // Real-world time at the aircraft position: notional ground time + airborne time.
+    const simDate = new Date(
+      departureTimeUTC + (GROUND_WORLD_SECONDS + progress * route.duration) * 1000
+    );
 
     set({
       elapsedTime: newElapsed,

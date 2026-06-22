@@ -6,6 +6,7 @@ import { WindowView } from './WindowView';
 import { FlightMap } from './FlightMap';
 import { FlightInfo } from './FlightInfo';
 import { AudioMixer } from './AudioMixer';
+import { MusicPlayer } from './MusicPlayer';
 import { FocusTimer } from './FocusTimer';
 import { SimulationControls } from './SimulationControls';
 import { JournalPanel } from './JournalPanel';
@@ -69,6 +70,7 @@ export function SimulationView() {
           <FocusTimer />
           <JournalPanel />
           <AudioMixer />
+          <MusicPlayer />
         </motion.aside>
       )}
 
