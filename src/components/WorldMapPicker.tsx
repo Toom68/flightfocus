@@ -47,6 +47,20 @@ function FlyTo({ target }: { target: Airport | null }) {
   return null;
 }
 
+function MapResizer() {
+  const map = useMap();
+  useEffect(() => {
+    // Leaflet often mis-measures the container when mounted inside an
+    // animated / flex modal.  Force it to recompute after the animation
+    // has had time to settle.
+    const t1 = setTimeout(() => map.invalidateSize(), 100);
+    const t2 = setTimeout(() => map.invalidateSize(), 350);
+    const t3 = setTimeout(() => map.invalidateSize(), 700);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, [map]);
+  return null;
+}
+
 export function WorldMapPicker({ from, onSelect, onClose }: WorldMapPickerProps) {
   const [selected, setSelected] = useState<Airport | null>(null);
   const [query, setQuery] = useState('');
@@ -141,6 +155,7 @@ export function WorldMapPicker({ from, onSelect, onClose }: WorldMapPickerProps)
             style={{ background: '#070d1a' }}
           >
             <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
+            <MapResizer />
             <FlyTo target={selected} />
 
             {routeLatLngs.length > 1 && (
