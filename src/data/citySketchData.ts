@@ -353,6 +353,317 @@ export const CITY_SKETCHES: Record<string, string> = {
 <rect x="34" y="38" width="24" height="18" stroke="currentColor" stroke-width="1.1"/>
 <path d="M34 38 L46 28 L58 38" stroke="currentColor" stroke-width="1" fill="none"/>
 <path d="M40 42 L40 56 M52 42 L52 56" stroke="currentColor" stroke-width="0.7"/>`,
+
+  // Karachi — port + mosque
+  KHI: `${HORIZON}
+<path d="M6 54 Q58 50 112 54" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M40 68 L40 40 Q50 28 60 40 L60 68" stroke="currentColor" stroke-width="1.2" fill="none"/>
+<path d="M40 40 L50 30 L60 40" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M50 30 L50 22" stroke="currentColor" stroke-width="0.9"/>
+<path d="M76 54 L76 40 L86 40 L86 54" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Lahore — Badshahi Mosque
+  LHE: `${HORIZON}
+<path d="M34 68 L34 44 Q48 30 62 44 L62 68" stroke="currentColor" stroke-width="1.2" fill="none"/>
+<path d="M34 44 L48 32 L62 44" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M48 32 L48 24" stroke="currentColor" stroke-width="0.9"/>
+<path d="M28 68 L28 50 L34 50 M68 68 L68 50 L62 50" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Islamabad — Faisal Mosque + Margalla Hills
+  ISB: `${HORIZON}
+<path d="M6 56 L26 38 L46 56" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M56 68 L56 30 L68 22 L80 30 L80 68" stroke="currentColor" stroke-width="1.2" fill="none"/>
+<path d="M56 30 L68 18 L80 30" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M68 18 L68 10" stroke="currentColor" stroke-width="0.9"/>`,
+
+  // Phuket — beach + palms
+  HKT: `${HORIZON}
+<path d="M6 58 Q30 54 54 58 T102 58" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M34 58 L34 38 M34 38 Q26 34 22 38 M34 38 Q42 34 46 38 M34 38 Q30 30 34 28" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M72 58 L72 42 M72 42 Q64 38 60 42 M72 42 Q80 38 84 42" stroke="currentColor" stroke-width="1" fill="none"/>`,
+
+  // Chiang Mai — temple + mountains
+  CNX: `${HORIZON}
+<path d="M6 56 L24 34 L42 56" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M52 68 L52 38 Q60 28 68 38 L68 68" stroke="currentColor" stroke-width="1.1" fill="none"/>
+<path d="M52 38 L60 28 L68 38" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M60 28 L60 20" stroke="currentColor" stroke-width="0.9"/>`,
+
+  // Cebu — Magellan's Cross + sea
+  CEB: `${HORIZON}
+<path d="M6 56 Q58 52 112 56" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M48 56 L48 30 M48 30 L42 24 L54 24 Z" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M48 24 L48 16" stroke="currentColor" stroke-width="0.9"/>
+<path d="M72 56 L72 40 L82 40 L82 56" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Surabaya — volcano + harbour
+  SUB: `${HORIZON}
+<path d="M14 58 L38 28 L62 58" stroke="currentColor" stroke-width="1.1" fill="none" stroke-linejoin="round"/>
+<path d="M32 36 L38 28 L44 36" stroke="currentColor" stroke-width="0.8"/>
+<path d="M76 58 L76 42 L88 42 L88 58" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Siem Reap — Angkor Wat
+  REP: `${HORIZON}
+<path d="M30 68 L30 36 L40 36 L40 28 L48 28 L48 20 L56 20 L56 28 L64 28 L64 36 L74 36 L74 68" stroke="currentColor" stroke-width="1.1" fill="none"/>
+<path d="M40 36 L48 28 L56 20 L64 28 L74 36" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M48 28 L48 20 M56 20 L56 12 M64 28 L64 20" stroke="currentColor" stroke-width="0.8"/>`,
+
+  // Vientiane — That Luang stupa
+  VTE: `${HORIZON}
+<path d="M48 68 L48 40 L52 36 L56 40 L56 68" stroke="currentColor" stroke-width="1.1" fill="none"/>
+<path d="M48 40 L52 34 L56 40" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M52 34 L52 26" stroke="currentColor" stroke-width="0.9"/>
+<path d="M44 44 L60 44 M42 50 L62 50" stroke="currentColor" stroke-width="0.7"/>`,
+
+  // Ulaanbaatar — steppe + ger
+  ULN: `${HORIZON}
+<path d="M6 56 Q58 52 112 56" stroke="currentColor" stroke-width="0.7" fill="none"/>
+<path d="M40 56 Q48 42 56 56" stroke="currentColor" stroke-width="1.1" fill="none"/>
+<path d="M40 56 L40 50 L56 50 L56 56" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M72 56 L72 34 L84 34 L84 56" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Shenzhen — skyline
+  SZX: `${HORIZON}
+<rect x="34" y="38" width="7" height="30" stroke="currentColor" stroke-width="0.9"/>
+<rect x="43" y="28" width="8" height="40" stroke="currentColor" stroke-width="1"/>
+<rect x="53" y="34" width="7" height="34" stroke="currentColor" stroke-width="0.9"/>
+<rect x="62" y="42" width="7" height="26" stroke="currentColor" stroke-width="0.9"/>
+<path d="M47 28 L47 22" stroke="currentColor" stroke-width="0.9"/>`,
+
+  // Kunming — pagoda + hills
+  KMG: `${HORIZON}
+<path d="M6 56 L22 40 L36 56" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M48 68 L48 44 L56 38 L64 44 L64 68" stroke="currentColor" stroke-width="1.1" fill="none"/>
+<path d="M48 44 L56 36 L64 44" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M56 36 L56 28" stroke="currentColor" stroke-width="0.8"/>`,
+
+  // Qingdao — bridge + sea
+  TAO: `${HORIZON}
+<path d="M6 54 Q58 50 112 54" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M20 54 L20 34 M20 34 L14 28 L26 28 Z" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M20 28 L20 22" stroke="currentColor" stroke-width="0.9"/>
+<path d="M50 54 L50 38 L62 38 L62 54" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Wuhan — Yellow Crane Tower + river
+  WUH: `${HORIZON}
+<path d="M6 50 Q58 46 112 50" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M48 68 L48 38 L56 30 L64 38 L64 68" stroke="currentColor" stroke-width="1.1" fill="none"/>
+<path d="M48 38 L56 30 L64 38" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M56 30 L56 22" stroke="currentColor" stroke-width="0.9"/>
+<path d="M44 44 L68 44 M42 50 L70 50" stroke="currentColor" stroke-width="0.7"/>`,
+
+  // Chittagong — port + hills
+  CGP: `${HORIZON}
+<path d="M6 54 Q58 50 112 54" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M14 54 L24 40 L34 54" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M48 54 L48 36 L58 36 L58 54" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M76 54 L76 42 L86 42 L86 54" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Muscat — fort + mountains
+  MCT: `${HORIZON}
+<path d="M6 56 L26 34 L46 56" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M56 68 L56 40 L68 40 L68 68" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M56 40 L62 32 L68 40" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M80 68 L80 44 L90 44 L90 68" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Manama — Bahrain fort
+  BAH: `${HORIZON}
+<path d="M6 56 Q58 52 112 56" stroke="currentColor" stroke-width="0.7" fill="none"/>
+<path d="M40 68 L40 34 L54 34 L54 68" stroke="currentColor" stroke-width="1.1" fill="none"/>
+<path d="M40 34 L47 26 L54 34" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M47 26 L47 18" stroke="currentColor" stroke-width="0.9"/>`,
+
+  // Kuwait — Kuwait Tower
+  KWI: `${HORIZON}
+<path d="M52 68 L52 30 Q48 26 48 20 Q52 16 56 20 Q56 26 52 30" stroke="currentColor" stroke-width="1.2" fill="none"/>
+<path d="M52 30 L52 22" stroke="currentColor" stroke-width="0.9"/>
+<rect x="64" y="44" width="8" height="24" stroke="currentColor" stroke-width="0.9"/>`,
+
+  // Amman — Roman theatre
+  AMM: `${HORIZON}
+<path d="M30 68 L30 44 Q48 30 66 44 L66 68" stroke="currentColor" stroke-width="1.1" fill="none"/>
+<path d="M34 50 L62 50 M38 56 L58 56 M42 62 L54 62" stroke="currentColor" stroke-width="0.7"/>`,
+
+  // Beirut — cedar + Pigeon Rocks
+  BEY: `${HORIZON}
+<path d="M40 68 L40 38 M40 38 Q32 34 28 38 M40 38 Q48 34 52 38 M40 38 Q36 30 40 28" stroke="currentColor" stroke-width="1.1" fill="none"/>
+<path d="M72 68 Q78 48 84 68 M84 68 Q90 48 96 68" stroke="currentColor" stroke-width="1" fill="none"/>`,
+
+  // Tehran — Milad Tower + Alborz
+  IKA: `${HORIZON}
+<path d="M6 56 L24 34 L42 56" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M58 68 L58 18 M54 22 L62 22 M52 28 L64 28" stroke="currentColor" stroke-width="1.1"/>
+<path d="M58 18 L58 10" stroke="currentColor" stroke-width="0.9"/>`,
+
+  // Baghdad — Tigris + minaret
+  BGW: `${HORIZON}
+<path d="M6 52 Q58 48 112 52" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M48 68 L48 36 L54 36 L54 68" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M48 36 L51 28 L54 36" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M51 28 L51 20" stroke="currentColor" stroke-width="0.8"/>`,
+
+  // Antalya — coast + ruins
+  AYT: `${HORIZON}
+<path d="M6 56 Q30 52 54 56 T102 56" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M36 56 L36 38 L42 38 L42 32 L48 32 L48 38 L54 38 L54 56" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M72 56 L72 42 L82 42 L82 56" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Algiers — Casbah + bay
+  ALG: `${HORIZON}
+<path d="M6 54 Q30 50 54 54 T102 54" stroke="currentColor" stroke-width="0.7" fill="none"/>
+<path d="M30 54 L30 36 L38 36 L38 54 M42 54 L42 32 L50 32 L50 54 M54 54 L54 38 L62 38 L62 54" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Tunis — medina + coast
+  TUN: `${HORIZON}
+<path d="M6 54 Q58 50 112 54" stroke="currentColor" stroke-width="0.7" fill="none"/>
+<path d="M44 68 L44 36 Q52 26 60 36 L60 68" stroke="currentColor" stroke-width="1.1" fill="none"/>
+<path d="M44 36 L52 28 L60 36" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M52 28 L52 20" stroke="currentColor" stroke-width="0.8"/>`,
+
+  // Accra — Independence Arch + coast
+  ACC: `${HORIZON}
+<path d="M6 56 Q58 52 112 56" stroke="currentColor" stroke-width="0.7" fill="none"/>
+<path d="M48 68 L48 28 L54 22 L60 28 L60 68" stroke="currentColor" stroke-width="1.1" fill="none"/>
+<path d="M48 28 L54 20 L60 28" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M54 20 L54 12" stroke="currentColor" stroke-width="0.8"/>`,
+
+  // Abuja — Aso Rock
+  ABV: `${HORIZON}
+<path d="M20 68 L36 28 L52 68" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linejoin="round"/>
+<path d="M30 40 L36 28 L42 40" stroke="currentColor" stroke-width="0.8"/>
+<path d="M70 68 L70 40 L80 40 L80 68" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Port Harcourt — Niger Delta
+  PHC: `${HORIZON}
+<path d="M6 54 Q30 50 54 54 T102 54" stroke="currentColor" stroke-width="0.7" fill="none"/>
+<path d="M6 58 Q20 54 34 58 T62 58 T96 58" stroke="currentColor" stroke-width="0.6" fill="none"/>
+<path d="M48 54 L48 36 L56 36 L56 54" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Kano — ancient walls
+  KAN: `${HORIZON}
+<path d="M30 68 L30 40 L58 40 L58 68" stroke="currentColor" stroke-width="1.1" fill="none"/>
+<path d="M30 40 L44 30 L58 40" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M44 30 L44 22" stroke="currentColor" stroke-width="0.9"/>`,
+
+  // Dakar — Gorée Island + coast
+  DKR: `${HORIZON}
+<path d="M6 56 Q58 52 112 56" stroke="currentColor" stroke-width="0.7" fill="none"/>
+<path d="M40 56 L40 34 L50 34 L50 56" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M40 34 L45 26 L50 34" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M76 56 Q82 44 88 56" stroke="currentColor" stroke-width="0.8" fill="none"/>`,
+
+  // Khartoum — Nile confluence
+  KRT: `${HORIZON}
+<path d="M6 48 Q30 44 48 52 Q66 60 90 50 Q100 48 112 50" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M6 56 Q30 52 48 58 Q66 64 90 56 Q100 54 112 56" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M48 68 L48 40 L56 40 L56 68" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Antananarivo — Royal Palace + hills
+  TNR: `${HORIZON}
+<path d="M6 56 L24 38 L42 56" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M48 68 L48 36 L56 36 L56 68" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M48 36 L52 28 L56 36" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M52 28 L52 20" stroke="currentColor" stroke-width="0.8"/>`,
+
+  // Seychelles — tropical island
+  SEZ: `${HORIZON}
+<path d="M6 60 Q30 56 54 60 T102 60" stroke="currentColor" stroke-width="0.7" fill="none"/>
+<path d="M40 60 L40 40 M40 40 Q32 36 28 40 M40 40 Q48 36 52 40 M40 40 Q36 32 40 30" stroke="currentColor" stroke-width="1" fill="none"/>
+<circle cx="86" cy="24" r="6" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Mauritius — Le Morne + lagoon
+  MRU: `${HORIZON}
+<path d="M6 58 Q58 54 112 58" stroke="currentColor" stroke-width="0.7" fill="none"/>
+<path d="M30 58 L30 30 L42 22 L50 30 L50 58" stroke="currentColor" stroke-width="1.1" fill="none" stroke-linejoin="round"/>
+<path d="M70 58 L70 42 L80 42 L80 58" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Kigali — thousand hills
+  KGL: `${HORIZON}
+<path d="M6 56 L18 42 L30 56 L42 40 L54 56 L66 42 L78 56" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M88 68 L88 38 L96 38 L96 68" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Bujumbura — Lake Tanganyika
+  BJM: `${HORIZON}
+<path d="M6 56 Q58 52 112 56" stroke="currentColor" stroke-width="0.7" fill="none"/>
+<path d="M30 56 L30 34 L40 34 L40 56" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M30 34 L35 26 L40 34" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M35 26 L35 18" stroke="currentColor" stroke-width="0.8"/>`,
+
+  // Lilongwe — plateau + acacia
+  LLW: `${HORIZON}
+<path d="M6 54 Q58 50 112 54" stroke="currentColor" stroke-width="0.7" fill="none"/>
+<path d="M40 54 L40 34 M40 34 Q34 30 30 34 M40 34 Q46 30 50 34" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M40 34 L40 26" stroke="currentColor" stroke-width="0.8"/>
+<path d="M72 54 L72 38 L82 38 L82 54" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Lusaka — savanna + baobab
+  LUN: `${HORIZON}
+<path d="M6 54 Q58 50 112 54" stroke="currentColor" stroke-width="0.7" fill="none"/>
+<path d="M42 54 L42 28 M42 28 Q32 24 26 28 M42 28 Q52 24 58 28 M42 28 Q38 20 42 16 M42 28 Q46 20 42 16" stroke="currentColor" stroke-width="1.1" fill="none"/>`,
+
+  // Harare — balancing rocks
+  HRE: `${HORIZON}
+<ellipse cx="40" cy="48" rx="8" ry="5" stroke="currentColor" stroke-width="1" fill="none"/>
+<ellipse cx="44" cy="40" rx="6" ry="4" stroke="currentColor" stroke-width="1" fill="none"/>
+<ellipse cx="38" cy="34" rx="5" ry="3" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M72 68 L72 44 L82 44 L82 68" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Windhoek — Namib desert + table mountain
+  WDH: `${HORIZON}
+<path d="M6 56 L30 40 L54 56" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M30 40 L30 34 M30 34 L26 30 L34 30 Z" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M70 68 L70 38 L82 38 L82 68" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Gaborone — Kgale Hill
+  GBE: `${HORIZON}
+<path d="M6 56 Q58 52 112 56" stroke="currentColor" stroke-width="0.7" fill="none"/>
+<path d="M34 56 L44 34 L54 56" stroke="currentColor" stroke-width="1" fill="none" stroke-linejoin="round"/>
+<path d="M40 42 L44 34 L48 42" stroke="currentColor" stroke-width="0.7"/>
+<path d="M72 56 L72 42 L82 42 L82 56" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Maputo — colonial arch + palms
+  MPM: `${HORIZON}
+<path d="M6 56 Q58 52 112 56" stroke="currentColor" stroke-width="0.7" fill="none"/>
+<path d="M40 68 L40 34 Q50 24 60 34 L60 68" stroke="currentColor" stroke-width="1.1" fill="none"/>
+<path d="M40 34 L50 24 L60 34" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M80 56 L80 38 M80 38 Q74 34 70 38 M80 38 Q86 34 90 38" stroke="currentColor" stroke-width="1" fill="none"/>`,
+
+  // Durban — beach + harbour
+  DUR: `${HORIZON}
+<path d="M6 56 Q30 52 54 56 T102 56" stroke="currentColor" stroke-width="0.7" fill="none"/>
+<path d="M30 56 L30 34 L38 34 L38 56" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M30 34 L34 26 L38 34" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M70 56 L70 42 L82 42 L82 56" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Cotonou — lagoon + stilt houses
+  COO: `${HORIZON}
+<path d="M6 54 Q58 50 112 54" stroke="currentColor" stroke-width="0.7" fill="none"/>
+<path d="M34 54 L34 40 L40 40 L40 54 M46 54 L46 40 L52 40 L52 54" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M34 40 L34 36 M40 40 L40 36 M46 40 L46 36 M52 40 L52 36" stroke="currentColor" stroke-width="0.6"/>`,
+
+  // Niamey — Niger river + dunes
+  NIM: `${HORIZON}
+<path d="M6 52 Q30 48 58 52 Q86 56 112 50" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M6 58 Q30 56 58 58 Q86 60 112 56" stroke="currentColor" stroke-width="0.6" fill="none"/>
+<path d="M40 68 L40 38 L48 38 L48 68" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Ouagadougou — Sahel flatlands
+  OUA: `${HORIZON}
+<path d="M6 54 Q58 50 112 54" stroke="currentColor" stroke-width="0.7" fill="none"/>
+<path d="M40 54 L40 30 M40 30 Q32 26 28 30 M40 30 Q48 26 52 30" stroke="currentColor" stroke-width="1" fill="none"/>
+<path d="M40 30 L40 22" stroke="currentColor" stroke-width="0.8"/>`,
+
+  // Juba — White Nile + savanna
+  JUB: `${HORIZON}
+<path d="M6 52 Q30 48 58 52 Q86 56 112 50" stroke="currentColor" stroke-width="0.8" fill="none"/>
+<path d="M40 68 L40 34 L48 34 L48 68" stroke="currentColor" stroke-width="0.9" fill="none"/>
+<path d="M40 34 L44 26 L48 34" stroke="currentColor" stroke-width="0.9" fill="none"/>`,
+
+  // Réunion — Piton des Neiges
+  RUN: `${HORIZON}
+<path d="M6 58 Q30 54 54 58 T102 58" stroke="currentColor" stroke-width="0.7" fill="none"/>
+<path d="M30 58 L30 22 L42 14 L54 22 L54 58" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/>
+<path d="M38 28 L42 14 L46 28" stroke="currentColor" stroke-width="0.8"/>`,
 };
 
 // Secondary airports that share a city's sketch.
