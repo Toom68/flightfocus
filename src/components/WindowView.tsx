@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { motion } from 'framer-motion';
 import { Plane, Sun, Moon, MapPin } from 'lucide-react';
 import { useFlightStore } from '@/store/flightStore';
 import { getSolarPosition, formatTimeInTimezone } from '@/utils/time';
@@ -20,9 +19,7 @@ export function WindowView() {
   const flightLevel = `FL${Math.round(position.altitude / 100).toString().padStart(3, '0')}`;
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+    <div
       className="relative w-full h-full rounded-2xl overflow-hidden bg-[#0a0a0d] select-none"
     >
       {/* 3D scene — fills entire container, we mask the edges with the wall on top */}
@@ -51,42 +48,7 @@ export function WindowView() {
             boxShadow: '0 0 0 100vmax #0e0e12, 0 0 0 6px #2a2a32, 0 0 0 7px #3a3a42',
           }}
         >
-          {/* Inner shadow vignette inside the window */}
-          <div
-            className="absolute -inset-0 rounded-[28px] pointer-events-none"
-            style={{
-              boxShadow: 'inset 0 0 24px 6px rgba(0,0,0,0.5)',
-            }}
-          />
-
-          {/* Glass reflection — diagonal sheen */}
-          <div
-            className="absolute inset-0 rounded-[28px] pointer-events-none overflow-hidden"
-            style={{
-              background: 'linear-gradient(125deg, rgba(200,220,255,0.08) 0%, rgba(200,220,255,0.02) 30%, transparent 50%, transparent 70%, rgba(255,255,255,0.03) 100%)',
-            }}
-          />
-
-          {/* Subtle vertical light streak */}
-          <motion.div
-            className="absolute inset-y-0 pointer-events-none"
-            style={{
-              width: '40%',
-              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent)',
-            }}
-            animate={{ x: ['-10%', '120%'] }}
-            transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', repeatDelay: 6 }}
-          />
-
-          {/* Bottom glass glow — warm cabin reflection */}
-          <div
-            className="absolute inset-x-0 bottom-0 h-1/4 pointer-events-none rounded-b-[28px]"
-            style={{
-              background: 'linear-gradient(to top, rgba(255,200,140,0.06), transparent)',
-            }}
-          />
-
-          {/* Inner trim highlight ring */}
+          {/* Thin inner shadow ring — only the edge, not the center */}
           <div
             className="absolute inset-0 rounded-[28px] pointer-events-none"
             style={{
@@ -135,6 +97,6 @@ export function WindowView() {
           </span>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
