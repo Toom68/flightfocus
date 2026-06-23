@@ -64,7 +64,7 @@ export function SimulationView() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="w-full lg:w-80 p-3 space-y-3 overflow-y-auto border-t lg:border-t-0 lg:border-l border-gray-800"
+          className="w-full lg:w-80 p-3 space-y-4 overflow-y-auto border-t lg:border-t-0 lg:border-l border-white/[0.04]"
         >
           <SimulationControls />
           <FocusTimer />

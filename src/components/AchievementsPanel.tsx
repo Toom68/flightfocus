@@ -56,7 +56,7 @@ export function AchievementsPanel({ unlocked }: AchievementsPanelProps) {
                   className={`flex items-center gap-3 p-2.5 rounded-lg border transition-colors ${
                     isUnlocked
                       ? 'bg-cabin-gold/10 border-cabin-gold/30'
-                      : 'bg-cabin-dim/30 border-gray-800'
+                      : 'bg-cabin-dim/30 border-white/[0.04]'
                   }`}
                 >
                   <div

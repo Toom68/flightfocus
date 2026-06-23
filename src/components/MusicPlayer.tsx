@@ -60,7 +60,7 @@ export function MusicPlayer() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-cabin-panel/80 backdrop-blur-xl border border-gray-800 rounded-xl p-4"
+      className="bg-cabin-panel/80 backdrop-blur-xl border border-white/[0.06] rounded-xl p-4 shadow-panel"
     >
       <audio
         ref={audioRef}

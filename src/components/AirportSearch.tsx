@@ -69,7 +69,7 @@ export function AirportSearch({ label, value, onChange, placeholder = 'Search ai
 
       {value ? (
         <div
-          className="flex items-center gap-3 p-3 bg-cabin-dim/50 border border-gray-700 rounded-lg cursor-pointer hover:border-cabin-accent/50 transition-colors"
+          className="flex items-center gap-3 p-3 bg-cabin-dim/50 border border-white/[0.06] rounded-lg cursor-pointer hover:border-cabin-accent/50 transition-all duration-200"
           onClick={() => {
             onChange(null as unknown as Airport);
             setTimeout(() => inputRef.current?.focus(), 100);
@@ -97,7 +97,7 @@ export function AirportSearch({ label, value, onChange, placeholder = 'Search ai
             onKeyDown={handleKeyDown}
             onFocus={() => query.length > 0 && setIsOpen(true)}
             placeholder={placeholder}
-            className="w-full pl-10 pr-4 py-3 bg-cabin-dim/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cabin-accent/50 focus:ring-1 focus:ring-cabin-accent/20 transition-all"
+            className="w-full pl-10 pr-4 py-3 bg-cabin-dim/50 border border-white/[0.06] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cabin-accent/50 focus:ring-1 focus:ring-cabin-accent/20 transition-all"
           />
         </div>
       )}
@@ -109,7 +109,7 @@ export function AirportSearch({ label, value, onChange, placeholder = 'Search ai
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.15 }}
-            className="absolute z-50 w-full mt-2 bg-cabin-panel border border-gray-700 rounded-lg shadow-2xl overflow-hidden"
+            className="absolute z-50 w-full mt-2 bg-cabin-panel border border-white/[0.08] rounded-lg shadow-panel overflow-hidden"
           >
             {results.map((result, index) => (
               <button

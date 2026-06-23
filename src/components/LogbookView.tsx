@@ -70,7 +70,7 @@ export function LogbookView({ save }: LogbookViewProps) {
 
 function Stat({ icon: Icon, label, value }: { icon: typeof MapPin; label: string; value: string }) {
   return (
-    <div className="bg-cabin-dim/40 border border-gray-800 rounded-lg p-2.5 text-center">
+    <div className="bg-cabin-dim/40 border border-white/[0.04] rounded-lg p-2.5 text-center shadow-soft">
       <Icon className="w-3.5 h-3.5 text-gray-500 mx-auto mb-1" />
       <p className="text-sm font-mono text-white">{value}</p>
       <p className="text-[10px] text-gray-600">{label}</p>

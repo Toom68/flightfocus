@@ -103,10 +103,10 @@ export function WorldMapPicker({ from, onSelect, onClose }: WorldMapPickerProps)
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.96, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-5xl bg-cabin-panel border border-gray-700 rounded-2xl overflow-hidden flex flex-col max-h-[92vh]"
+        className="w-full max-w-5xl bg-cabin-panel border border-white/[0.08] rounded-2xl overflow-hidden flex flex-col max-h-[92vh] shadow-panel"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-800">
+        <div className="flex items-center justify-between p-4 border-b border-white/[0.06]">
           <div className="flex items-center gap-2">
             <Plane className="w-4 h-4 text-cabin-accent" />
             <span className="text-sm font-medium text-white">Choose your destination</span>
@@ -118,7 +118,7 @@ export function WorldMapPicker({ from, onSelect, onClose }: WorldMapPickerProps)
         </div>
 
         {/* Search */}
-        <div className="p-3 border-b border-gray-800 relative z-[1100]">
+        <div className="p-3 border-b border-white/[0.06] relative z-[1100]">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
             <input
@@ -126,11 +126,11 @@ export function WorldMapPicker({ from, onSelect, onClose }: WorldMapPickerProps)
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search a city or airport..."
-              className="w-full pl-10 pr-4 py-2.5 bg-cabin-dim/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cabin-accent/50 text-sm"
+              className="w-full pl-10 pr-4 py-2.5 bg-cabin-dim/50 border border-white/[0.06] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cabin-accent/50 text-sm"
             />
           </div>
           {searchResults.length > 0 && (
-            <div className="absolute left-3 right-3 mt-1 z-[1200] bg-cabin-panel border border-gray-700 rounded-lg shadow-2xl overflow-hidden">
+            <div className="absolute left-3 right-3 mt-1 z-[1200] bg-cabin-panel border border-white/[0.08] rounded-lg shadow-panel overflow-hidden">
               {searchResults.map((r) => (
                 <button
                   key={r.airport.iata}
@@ -193,7 +193,7 @@ export function WorldMapPicker({ from, onSelect, onClose }: WorldMapPickerProps)
         </div>
 
         {/* Confirm bar */}
-        <div className="p-4 border-t border-gray-800">
+        <div className="p-4 border-t border-white/[0.06]">
           {selected ? (
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
               <div className="min-w-0">
@@ -211,7 +211,7 @@ export function WorldMapPicker({ from, onSelect, onClose }: WorldMapPickerProps)
               </div>
               <button
                 onClick={() => onSelect(selected)}
-                className="w-full sm:w-auto px-6 py-3 bg-cabin-accent hover:bg-blue-600 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2 shrink-0"
+                className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-cabin-accent to-blue-500 hover:shadow-glow text-white font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shrink-0"
               >
                 <Plane className="w-4 h-4" />
                 Fly to {selected.iata}

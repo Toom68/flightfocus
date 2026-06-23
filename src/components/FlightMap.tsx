@@ -69,7 +69,7 @@ export function FlightMap() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="relative w-full h-full rounded-2xl overflow-hidden border border-gray-800/50"
+      className="relative w-full h-full rounded-2xl overflow-hidden border border-white/[0.04]"
     >
       <MapContainer
         center={[centerLat, centerLng]}

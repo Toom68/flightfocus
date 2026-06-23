@@ -164,7 +164,7 @@ export function AudioMixer() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       onClick={handleInteraction}
-      className="bg-cabin-panel/80 backdrop-blur-xl border border-gray-800 rounded-xl p-4"
+      className="bg-cabin-panel/80 backdrop-blur-xl border border-white/[0.06] rounded-xl p-4 shadow-panel"
     >
       <div className="flex items-center justify-between mb-3">
         <button onClick={() => setCollapsed((c) => !c)} className="flex items-center gap-2 group">

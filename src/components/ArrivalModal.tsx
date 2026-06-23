@@ -72,11 +72,11 @@ export function ArrivalModal() {
         initial={{ scale: 0.95, y: 20, opacity: 0 }}
         animate={{ scale: 1, y: 0, opacity: 1 }}
         transition={{ type: 'spring', damping: 22 }}
-        className="w-full max-w-lg bg-cabin-panel border border-gray-700 rounded-2xl overflow-hidden max-h-[92vh] flex flex-col"
+        className="w-full max-w-lg bg-cabin-panel border border-white/[0.08] rounded-2xl overflow-hidden max-h-[92vh] flex flex-col shadow-panel"
       >
         {/* Header */}
-        <div className="p-5 bg-gradient-to-b from-cabin-accent/15 to-transparent text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-cabin-accent/20 mb-2">
+        <div className="p-5 bg-gradient-to-b from-cabin-accent/15 via-cabin-accent/5 to-transparent text-center relative overflow-hidden">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-cabin-accent/20 mb-2 shadow-glow">
             <PlaneLanding className="w-6 h-6 text-cabin-accent" />
           </div>
           <p className="text-xs uppercase tracking-wider text-gray-400">You've landed in</p>
@@ -106,7 +106,7 @@ export function ArrivalModal() {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 + i * 0.12 }}
-                    className="flex items-center gap-3 p-2.5 rounded-lg bg-cabin-gold/10 border border-cabin-gold/30"
+                    className="flex items-center gap-3 p-2.5 rounded-lg bg-cabin-gold/10 border border-cabin-gold/30 shadow-glow-gold"
                   >
                     <div className="w-9 h-9 rounded-lg bg-cabin-gold/20 text-cabin-gold flex items-center justify-center shrink-0">
                       <Icon className="w-4 h-4" />
@@ -122,12 +122,12 @@ export function ArrivalModal() {
           )}
 
           {/* Journal entry about the city left behind */}
-          <div className="bg-cabin-dim/40 border border-gray-800 rounded-xl p-4">
+          <div className="bg-cabin-dim/40 border border-white/[0.04] rounded-xl p-4 shadow-soft">
             <p className="text-[10px] uppercase tracking-wider text-gray-500 flex items-center gap-1 mb-2">
               <BookOpen className="w-3 h-3" /> A page from {departure?.city}
             </p>
             <div className="flex gap-3">
-              <div className="shrink-0 w-24 h-16 rounded-lg bg-cabin-dark/60 border border-gray-800 flex items-center justify-center text-cabin-accent/80">
+              <div className="shrink-0 w-24 h-16 rounded-lg bg-cabin-dark/60 border border-white/[0.04] flex items-center justify-center text-cabin-accent/80">
                 {journalEntry && <CitySketch sketchKey={journalEntry.svgKey} className="w-20 h-14" />}
               </div>
               <div className="flex-1 min-w-0">
@@ -145,7 +145,7 @@ export function ArrivalModal() {
 
           <button
             onClick={handleContinue}
-            className="w-full py-3.5 bg-cabin-accent hover:bg-blue-600 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3.5 bg-gradient-to-r from-cabin-accent to-blue-500 hover:shadow-glow text-white font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
           >
             Continue in {arrival.city}
             <ArrowRight className="w-4 h-4" />

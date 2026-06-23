@@ -71,10 +71,10 @@ export function GroundedView() {
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-cabin-panel/80 backdrop-blur-xl border border-gray-800 rounded-2xl p-5"
+              className="bg-cabin-panel/80 backdrop-blur-xl border border-white/[0.06] rounded-2xl p-5 shadow-panel"
             >
               <div className="flex items-start gap-4">
-                <div className="shrink-0 w-32 h-24 rounded-xl bg-cabin-dark/60 border border-gray-800 flex items-center justify-center text-cabin-accent/80">
+                <div className="shrink-0 w-32 h-24 rounded-xl bg-cabin-dark/60 border border-white/[0.04] flex items-center justify-center text-cabin-accent/80 shadow-soft">
                   <CitySketch sketchKey={getSketchKey(here.iata)} className="w-28 h-20" />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -89,7 +89,7 @@ export function GroundedView() {
 
               <button
                 onClick={() => setPickerOpen(true)}
-                className="w-full mt-4 py-3.5 bg-cabin-accent hover:bg-blue-600 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+                className="w-full mt-4 py-3.5 bg-gradient-to-r from-cabin-accent to-blue-500 hover:shadow-glow text-white font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
               >
                 <Navigation className="w-4 h-4" />
                 Choose your next destination
@@ -97,7 +97,7 @@ export function GroundedView() {
             </motion.div>
 
             {/* Tabs */}
-            <div className="bg-cabin-panel/80 backdrop-blur-xl border border-gray-800 rounded-2xl p-4">
+            <div className="bg-cabin-panel/80 backdrop-blur-xl border border-white/[0.06] rounded-2xl p-4 shadow-panel">
               <div className="flex gap-1 mb-4 bg-cabin-dim/40 rounded-lg p-1">
                 {tabs.map((t) => (
                   <button

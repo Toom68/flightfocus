@@ -27,15 +27,15 @@ export function FlightSetup() {
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: 'spring' }}
-            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-cabin-accent/10 border border-cabin-accent/20 mb-4"
+            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-cabin-accent/10 border border-cabin-accent/20 mb-4 shadow-glow"
           >
             <Plane className="w-8 h-8 text-cabin-accent" />
           </motion.div>
-          <h1 className="text-3xl font-display font-bold text-white mb-2">FlightFocus</h1>
+          <h1 className="text-3xl font-display font-bold text-white mb-2">flyandwork</h1>
           <p className="text-gray-400 text-sm">Select your route. Begin your focus flight.</p>
         </div>
 
-        <div className="bg-cabin-panel/80 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 space-y-6">
+        <div className="bg-cabin-panel/80 backdrop-blur-xl border border-white/[0.06] rounded-2xl p-6 space-y-6 shadow-panel">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <AirportSearch
               label="Departure"
@@ -55,7 +55,7 @@ export function FlightSetup() {
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
-              className="border-t border-gray-800 pt-4"
+              className="border-t border-white/[0.04] pt-4"
             >
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
@@ -96,20 +96,20 @@ export function FlightSetup() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setTimeMode('realtime')}
-                    className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-colors ${
+                    className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-all duration-200 ${
                       timeMode === 'realtime'
                         ? 'bg-cabin-accent/20 text-cabin-accent border border-cabin-accent/30'
-                        : 'bg-cabin-dim/50 text-gray-500 border border-gray-800 hover:text-gray-400'
+                        : 'bg-cabin-dim/50 text-gray-500 border border-white/[0.06] hover:text-gray-400'
                     }`}
                   >
                     Real Time
                   </button>
                   <button
                     onClick={() => setTimeMode('custom')}
-                    className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-colors ${
+                    className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-all duration-200 ${
                       timeMode === 'custom'
                         ? 'bg-cabin-accent/20 text-cabin-accent border border-cabin-accent/30'
-                        : 'bg-cabin-dim/50 text-gray-500 border border-gray-800 hover:text-gray-400'
+                        : 'bg-cabin-dim/50 text-gray-500 border border-white/[0.06] hover:text-gray-400'
                     }`}
                   >
                     Custom Time
@@ -156,7 +156,7 @@ export function FlightSetup() {
             whileTap={{ scale: 0.99 }}
             disabled={!departure || !arrival}
             onClick={startFlight}
-            className="w-full py-4 bg-cabin-accent hover:bg-blue-600 disabled:bg-gray-800 disabled:text-gray-600 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+            className="w-full py-4 bg-gradient-to-r from-cabin-accent to-blue-500 hover:shadow-glow disabled:from-gray-800 disabled:to-gray-800 disabled:text-gray-600 disabled:shadow-none text-white font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
           >
             <Plane className="w-5 h-5" />
             Begin Flight

@@ -221,7 +221,7 @@ export const useSavegameStore = create<SavegameStore>()(
       clearPendingAchievements: () => set({ pendingAchievements: [] }),
     }),
     {
-      name: 'flightfocus-saves',
+      name: 'flyandwork-saves',
       version: 1,
     }
   )

@@ -66,15 +66,15 @@ export function HomeScreen() {
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: 'spring' }}
-            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-cabin-accent/10 border border-cabin-accent/20 mb-4"
+            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-cabin-accent/10 border border-cabin-accent/20 mb-4 shadow-glow"
           >
             <Plane className="w-8 h-8 text-cabin-accent" />
           </motion.div>
-          <h1 className="text-3xl font-display font-bold text-white mb-2">FlightFocus</h1>
+          <h1 className="text-3xl font-display font-bold text-white mb-2">flyandwork</h1>
           <p className="text-gray-400 text-sm">A quiet seat above the world. Pick up where you landed.</p>
         </div>
 
-        <div className="bg-cabin-panel/80 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 space-y-4">
+        <div className="bg-cabin-panel/80 backdrop-blur-xl border border-white/[0.06] rounded-2xl p-6 space-y-4 shadow-panel">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-medium text-white">Your journeys</h2>
             <span className="text-xs text-gray-500 font-mono">{saves.length}/{MAX_SAVES}</span>
@@ -93,10 +93,10 @@ export function HomeScreen() {
                 layout
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="group flex items-center gap-3 p-3 bg-cabin-dim/40 border border-gray-800 rounded-xl hover:border-cabin-accent/40 transition-colors"
+                className="group flex items-center gap-3 p-3 bg-cabin-dim/40 border border-white/[0.04] rounded-xl hover:border-cabin-accent/30 hover:shadow-soft transition-all duration-200"
               >
                 <button onClick={() => handleContinue(save)} className="flex-1 flex items-center gap-3 text-left min-w-0">
-                  <div className="w-11 h-11 rounded-lg bg-cabin-accent/15 flex items-center justify-center shrink-0">
+                  <div className="w-11 h-11 rounded-lg bg-cabin-accent/15 flex items-center justify-center shrink-0 shadow-glow">
                     <MapPin className="w-5 h-5 text-cabin-accent" />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -137,7 +137,7 @@ export function HomeScreen() {
           <button
             onClick={() => setShowNew(true)}
             disabled={saves.length >= MAX_SAVES}
-            className="w-full py-3.5 bg-cabin-accent hover:bg-blue-600 disabled:bg-gray-800 disabled:text-gray-600 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3.5 bg-gradient-to-r from-cabin-accent to-blue-500 hover:shadow-glow disabled:from-gray-800 disabled:to-gray-800 disabled:text-gray-600 disabled:shadow-none text-white font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
           >
             <Plus className="w-5 h-5" />
             New Journey
@@ -185,7 +185,7 @@ function NewJourneyModal({ onClose, onCreate }: NewJourneyModalProps) {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md bg-cabin-panel border border-gray-700 rounded-2xl p-6 space-y-5"
+        className="w-full max-w-md bg-cabin-panel border border-white/[0.08] rounded-2xl p-6 space-y-5 shadow-panel"
       >
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-white">Start a new journey</h3>
@@ -214,14 +214,14 @@ function NewJourneyModal({ onClose, onCreate }: NewJourneyModalProps) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder={defaultName || 'My grand tour'}
-            className="w-full px-4 py-3 bg-cabin-dim/50 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-cabin-accent/50 transition-all"
+            className="w-full px-4 py-3 bg-cabin-dim/50 border border-white/[0.06] rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-cabin-accent/50 transition-all"
           />
         </div>
 
         <button
           onClick={() => origin && onCreate(name || defaultName, origin)}
           disabled={!origin}
-          className="w-full py-3.5 bg-cabin-accent hover:bg-blue-600 disabled:bg-gray-800 disabled:text-gray-600 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+          className="w-full py-3.5 bg-gradient-to-r from-cabin-accent to-blue-500 hover:shadow-glow disabled:from-gray-800 disabled:to-gray-800 disabled:text-gray-600 disabled:shadow-none text-white font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
         >
           <Plane className="w-5 h-5" />
           Begin

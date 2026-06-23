@@ -32,7 +32,7 @@ export function JournalView({ entries }: JournalViewProps) {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: Math.min(i * 0.04, 0.3) }}
-          className="bg-cabin-dim/40 border border-gray-800 rounded-xl p-4"
+          className="bg-cabin-dim/40 border border-white/[0.04] rounded-xl p-4 shadow-soft"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2 text-sm">
@@ -44,7 +44,7 @@ export function JournalView({ entries }: JournalViewProps) {
           </div>
 
           <div className="flex gap-4">
-            <div className="shrink-0 w-28 h-20 rounded-lg bg-cabin-dark/60 border border-gray-800 flex items-center justify-center text-cabin-accent/80">
+            <div className="shrink-0 w-28 h-20 rounded-lg bg-cabin-dark/60 border border-white/[0.04] flex items-center justify-center text-cabin-accent/80">
               <CitySketch sketchKey={entry.svgKey} className="w-24 h-16" />
             </div>
             <div className="flex-1 min-w-0">
