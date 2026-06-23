@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type MusicGenre = 'classical' | 'jazz' | 'lofi';
+export type MusicGenre = 'classical' | 'jazz' | 'lofi' | 'ambient' | 'electronic' | 'cinematic';
 
 export interface MusicTrack {
   id: string;

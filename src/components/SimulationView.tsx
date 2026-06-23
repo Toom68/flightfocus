@@ -99,15 +99,15 @@ export function SimulationView() {
             })}
           </div>
 
-          {/* Active panel — only one visible at a time, no scroll needed */}
-          <div className="flex-1 min-h-0 overflow-y-auto">
+          {/* Active panel — fills remaining sidebar height */}
+          <div className="flex-1 min-h-0 flex flex-col">
             {activeTab === 'focus' && <FocusTimer />}
             {activeTab === 'journal' && <JournalPanel />}
             {/* Audio + Music stay mounted but hidden to keep audio playing */}
-            <div className={activeTab === 'audio' ? '' : 'hidden'}>
+            <div className={`flex-1 min-h-0 flex flex-col ${activeTab === 'audio' ? '' : 'hidden'}`}>
               <AudioMixer />
             </div>
-            <div className={activeTab === 'music' ? '' : 'hidden'}>
+            <div className={`flex-1 min-h-0 flex flex-col ${activeTab === 'music' ? '' : 'hidden'}`}>
               <MusicPlayer />
             </div>
           </div>

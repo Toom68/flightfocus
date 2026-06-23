@@ -1,12 +1,15 @@
 import { Handler } from '@netlify/functions';
 
-type Genre = 'classical' | 'jazz' | 'lofi';
+type Genre = 'classical' | 'jazz' | 'lofi' | 'ambient' | 'electronic' | 'cinematic';
 
 // Handpicked, focus-friendly query profiles per genre: instrumental, low-energy.
 const GENRE_QUERY: Record<Genre, { tags: string; fuzzytags: string }> = {
   classical: { tags: 'classical', fuzzytags: 'piano+ambient+instrumental' },
   jazz: { tags: 'jazz', fuzzytags: 'lounge+smooth+instrumental' },
   lofi: { tags: 'lofi', fuzzytags: 'chillout+downtempo+instrumental' },
+  ambient: { tags: 'ambient', fuzzytags: 'drone+atmospheric+instrumental' },
+  electronic: { tags: 'electronic', fuzzytags: 'downtempo+synthwave+instrumental' },
+  cinematic: { tags: 'soundtrack', fuzzytags: 'cinematic+orchestral+instrumental' },
 };
 
 interface JamendoTrack {
@@ -27,7 +30,7 @@ export const handler: Handler = async (event) => {
   }
 
   const genreParam = (event.queryStringParameters?.genre || 'lofi').toLowerCase();
-  const genre: Genre = (['classical', 'jazz', 'lofi'].includes(genreParam) ? genreParam : 'lofi') as Genre;
+  const genre: Genre = (['classical', 'jazz', 'lofi', 'ambient', 'electronic', 'cinematic'].includes(genreParam) ? genreParam : 'lofi') as Genre;
   const q = GENRE_QUERY[genre];
 
   const params = new URLSearchParams({
