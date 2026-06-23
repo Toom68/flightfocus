@@ -15,7 +15,7 @@ import type { FlightPhase } from '@/types/flight';
 // Auto (phase-driven) channel volumes. Channels not listed are left to the user.
 type AutoMap = Partial<Record<string, number>>;
 const PHASE_AUTO: Record<FlightPhase, AutoMap> = {
-  BOARDING: { boarding: 0.6, engine: 0.12, hvac: 0.2, cabin: 0.15, wind: 0, pressure: 0 },
+  BOARDING: { boarding: 0.6, engine: 0, hvac: 0.2, cabin: 0.15, wind: 0, pressure: 0 },
   TAXI: { boarding: 0.1, engine: 0.3, hvac: 0.25, cabin: 0.2, wind: 0, pressure: 0 },
   TAKEOFF: { boarding: 0, engine: 0.85, hvac: 0.3, cabin: 0.1, wind: 0.3, pressure: 0 },
   CLIMB: { boarding: 0, engine: 0.6, hvac: 0.35, cabin: 0.2, wind: 0.35, pressure: 0.4 },
@@ -156,6 +156,17 @@ export function AudioMixer() {
   }, [effectivePhase, activePreset, isInitialized]);
 
   const handleInteraction = () => { audioEngine.resume(); };
+
+  // Stop all audio when leaving the simulation view.
+  useEffect(() => {
+    return () => {
+      if (!isInitialized) return;
+      channels.forEach((ch) => {
+        audioEngine.setChannelVolume(ch.id, 0, 0.5);
+      });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isInitialized]);
 
   const presetList: AudioPreset[] = ['auto', 'focus', 'night', 'stormy', 'takeoff', 'silent'];
 

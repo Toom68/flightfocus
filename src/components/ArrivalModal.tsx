@@ -66,7 +66,7 @@ export function ArrivalModal() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
+      className="fixed inset-0 z-[5000] bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
     >
       <motion.div
         initial={{ scale: 0.95, y: 20, opacity: 0 }}

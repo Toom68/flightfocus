@@ -62,7 +62,7 @@ export const useFlightStore = create<FlightStore>((set, get) => ({
   elapsedTime: 0,
   isActive: false,
   isPaused: false,
-  timeScale: 60,
+  timeScale: 1,
   viewMode: 'home',
   groundElapsed: 0,
   timeMode: 'realtime',

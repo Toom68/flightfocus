@@ -84,6 +84,7 @@ export function getPhaseDescription(phase: FlightPhase): string {
 }
 
 export function formatDuration(seconds: number): string {
+  if (seconds < 60) return `${Math.round(seconds)}s`;
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   if (hours > 0) {

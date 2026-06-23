@@ -19,10 +19,8 @@ export function WindowView() {
   const flightLevel = `FL${Math.round(position.altitude / 100).toString().padStart(3, '0')}`;
 
   return (
-    <div
-      className="relative w-full h-full rounded-2xl overflow-hidden bg-[#0a0a0d] select-none"
-    >
-      {/* 3D scene — fills entire container, we mask the edges with the wall on top */}
+    <div className="relative w-full h-full rounded-2xl overflow-hidden bg-[#0a0a0d] select-none">
+      {/* Sky scene fills entire container */}
       <div className="absolute inset-0">
         <Scene2D
           altitude={position.altitude}
@@ -33,33 +31,23 @@ export function WindowView() {
         />
       </div>
 
-      {/* Cabin wall — opaque border surrounding the window opening.
-          Uses box-shadow to create a thick frame without covering the center. */}
-      <div
-        className="absolute pointer-events-none flex items-center justify-center"
-        style={{ inset: 0 }}
-      >
-        <div
-          className="relative"
-          style={{
-            width: '76%',
-            height: '88%',
-            borderRadius: '28px',
-            boxShadow: '0 0 0 100vmax #0e0e12, 0 0 0 6px #2a2a32, 0 0 0 7px #3a3a42',
-          }}
-        >
-          {/* Thin inner shadow ring — only the edge, not the center */}
-          <div
-            className="absolute inset-0 rounded-[28px] pointer-events-none"
-            style={{
-              boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.06)',
-            }}
-          />
-        </div>
-      </div>
+      {/* Oval cabin window frame — SVG mask creates the window opening */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none">
+        <defs>
+          <mask id="ovalWindow">
+            <rect width="100%" height="100%" fill="white" />
+            <ellipse cx="50%" cy="50%" rx="38%" ry="44%" fill="black" />
+          </mask>
+        </defs>
+        {/* Wall fill with mask cutout */}
+        <rect width="100%" height="100%" fill="#0e0e12" mask="url(#ovalWindow)" />
+        {/* Inner ring highlight */}
+        <ellipse cx="50%" cy="50%" rx="38%" ry="44%" fill="none" stroke="#2a2a32" strokeWidth="3" />
+        <ellipse cx="50%" cy="50%" rx="38%" ry="44%" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+      </svg>
 
       {/* Top-right: phase indicator */}
-      <div className="absolute top-3 right-3 pointer-events-none">
+      <div className="absolute top-3 right-3 pointer-events-none z-10">
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/[0.06]">
           <Plane className="w-3 h-3 text-cabin-accent" />
           <span className="text-[10px] font-medium text-white/70 tracking-wide uppercase">{phase}</span>
@@ -67,7 +55,7 @@ export function WindowView() {
       </div>
 
       {/* Bottom-left: time + altitude */}
-      <div className="absolute bottom-3 left-3 pointer-events-none">
+      <div className="absolute bottom-3 left-3 pointer-events-none z-10">
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/50 backdrop-blur-md border border-white/[0.06]">
           <div className="flex items-center gap-1.5">
             {isDay ? (
@@ -89,7 +77,7 @@ export function WindowView() {
       </div>
 
       {/* Bottom-right: coordinates */}
-      <div className="absolute bottom-3 right-3 pointer-events-none">
+      <div className="absolute bottom-3 right-3 pointer-events-none z-10">
         <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-black/50 backdrop-blur-md border border-white/[0.06]">
           <MapPin className="w-3 h-3 text-white/40" />
           <span className="text-[10px] font-mono text-white/50">

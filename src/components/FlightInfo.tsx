@@ -9,6 +9,10 @@ export function FlightInfo() {
 
   if (!route) return null;
 
+  const etaArrivalTime = arrival
+    ? formatTimeInTimezone(new Date(simulationDate.getTime() + position.timeRemaining * 1000), arrival.timezone)
+    : formatDuration(position.timeRemaining);
+
   const stats = [
     {
       icon: Gauge,
@@ -28,7 +32,7 @@ export function FlightInfo() {
     {
       icon: Clock,
       label: 'ETA',
-      value: formatDuration(position.timeRemaining),
+      value: etaArrivalTime,
     },
   ];
 

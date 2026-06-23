@@ -1,10 +1,12 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { MapContainer, TileLayer, Polyline, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
+import { LocateFixed } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import { useFlightStore } from '@/store/flightStore';
 import { formatDuration } from '@/engine/simulation';
+import { formatTimeInTimezone } from '@/utils/time';
 
 const planeIcon = L.divIcon({
   html: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -45,8 +47,19 @@ function MapUpdater({ center, zoom }: { center: [number, number]; zoom: number }
   return null;
 }
 
+function FollowUpdater({ follow, position }: { follow: boolean; position: [number, number] }) {
+  const map = useMap();
+  useEffect(() => {
+    if (follow) {
+      map.setView(position, Math.max(map.getZoom(), 8), { animate: true, duration: 1.5 });
+    }
+  }, [follow, position, map]);
+  return null;
+}
+
 export function FlightMap() {
-  const { route, position, progress } = useFlightStore();
+  const { route, position, progress, arrival, simulationDate } = useFlightStore();
+  const [follow, setFollow] = useState(false);
 
   if (!route) return null;
 
@@ -64,6 +77,11 @@ export function FlightMap() {
 
   const traveledIndex = Math.floor(progress * (routeLatLngs.length - 1));
   const traveledLatLngs = routeLatLngs.slice(0, traveledIndex + 1);
+
+  // Estimated arrival time at destination timezone
+  const arrivalTime = arrival
+    ? formatTimeInTimezone(new Date(simulationDate.getTime() + position.timeRemaining * 1000), arrival.timezone)
+    : formatDuration(position.timeRemaining);
 
   return (
     <motion.div
@@ -83,6 +101,7 @@ export function FlightMap() {
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
         <MapUpdater center={[centerLat, centerLng]} zoom={zoom} />
+        <FollowUpdater follow={follow} position={[position.lat, position.lng]} />
 
         <Polyline
           positions={routeLatLngs}
@@ -114,12 +133,26 @@ export function FlightMap() {
           {route.arrival.iata}
         </div>
       </div>
+
+      {/* Follow button */}
+      <button
+        onClick={() => setFollow((f) => !f)}
+        className={`absolute top-3 right-3 z-[1000] flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-medium transition-all duration-200 ${
+          follow
+            ? 'bg-cabin-accent/30 text-cabin-accent border border-cabin-accent/40 shadow-glow'
+            : 'bg-black/80 backdrop-blur-sm text-gray-400 border border-white/[0.06] hover:text-white'
+        }`}
+      >
+        <LocateFixed className="w-3 h-3" />
+        {follow ? 'Following' : 'Follow'}
+      </button>
+
       <div className="absolute bottom-3 left-3 right-3 z-[1000] flex items-center justify-between">
         <span className="px-2 py-1 bg-black/80 backdrop-blur-sm rounded text-[10px] font-mono text-gray-400">
           {(progress * 100).toFixed(1)}%
         </span>
         <span className="px-2 py-1 bg-black/80 backdrop-blur-sm rounded text-[10px] font-mono text-gray-400">
-          ETA {formatDuration(position.timeRemaining)}
+          ETA {arrivalTime}
         </span>
       </div>
     </motion.div>
