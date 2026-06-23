@@ -5,6 +5,16 @@ import {
   Piano, Disc3, Radio, Cloud, Waves, Film, Sliders,
 } from 'lucide-react';
 import { useMusicStore, type MusicGenre } from '@/store/musicStore';
+import { useSpotifyStore } from '@/store/spotifyStore';
+import { isSpotifyConfigured } from '@/utils/spotify';
+
+function SpotifyIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.299.421-1.02.599-1.559.3z"/>
+    </svg>
+  );
+}
 
 const GENRES: { id: MusicGenre; label: string; icon: typeof Piano }[] = [
   { id: 'classical', label: 'Classical', icon: Piano },
@@ -36,6 +46,22 @@ export function MusicPlayer() {
 
   const current = tracks[index];
   const [buffering, setBuffering] = useState(false);
+
+  // Spotify integration.
+  const { connected: spotifyConnected, track: spotifyTrack, connect: spotifyConnect, disconnect: spotifyDisconnect, startPolling: spotifyStartPolling } = useSpotifyStore();
+  const spotifyActive = spotifyConnected && spotifyTrack?.isPlaying;
+
+  // Start Spotify polling on mount if already connected.
+  useEffect(() => {
+    if (spotifyConnected) spotifyStartPolling();
+  }, []);
+
+  // When Spotify is playing, pause Jamendo.
+  useEffect(() => {
+    if (spotifyActive && isPlaying) {
+      useMusicStore.getState().pause();
+    }
+  }, [spotifyActive, isPlaying]);
 
   // Single effect: sync src + drive play/pause together to avoid race conditions.
   useEffect(() => {
@@ -154,6 +180,20 @@ export function MusicPlayer() {
           <span className="text-sm font-medium text-white">Focus Music</span>
         </div>
         <div className="flex items-center gap-2">
+          {isSpotifyConfigured() && (
+            <button
+              onClick={() => spotifyConnected ? spotifyDisconnect() : spotifyConnect()}
+              className={`flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium transition-all duration-200 ${
+                spotifyConnected
+                  ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
+                  : 'bg-cabin-dim/40 text-gray-400 hover:text-white'
+              }`}
+              title={spotifyConnected ? 'Disconnect Spotify' : 'Connect Spotify'}
+            >
+              <SpotifyIcon className="w-3 h-3" />
+              {spotifyConnected ? 'On' : 'Spotify'}
+            </button>
+          )}
           <button
             onClick={() => setShowEq((s) => !s)}
             className={`p-1.5 rounded transition-all duration-200 ${showEq ? 'bg-cabin-accent/20 text-cabin-accent' : 'text-gray-400 hover:text-white'}`}
@@ -193,21 +233,54 @@ export function MusicPlayer() {
 
       {/* Main content area */}
       <div className="flex-1 min-h-0 flex flex-col">
-        {status === 'idle' && (
+        {/* Spotify track display — takes priority when connected & playing */}
+        {spotifyConnected && spotifyTrack && (
+          <div className="flex-1 min-h-0 flex flex-col items-center justify-center text-center py-4">
+            <motion.div
+              key={spotifyTrack.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="w-20 h-20 rounded-2xl bg-cabin-dim/40 border border-white/[0.06] flex items-center justify-center mb-4 overflow-hidden shadow-glow"
+            >
+              {spotifyTrack.albumArt ? (
+                <img src={spotifyTrack.albumArt} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <SpotifyIcon className="w-8 h-8 text-green-500/70" />
+              )}
+            </motion.div>
+            <p className="text-sm font-medium text-white max-w-full truncate px-2">{spotifyTrack.title}</p>
+            <p className="text-xs text-gray-500 max-w-full truncate px-2 mt-0.5">{spotifyTrack.artist}</p>
+            <div className="flex items-center gap-1.5 mt-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-[10px] text-green-500/80 font-mono">Spotify</span>
+            </div>
+          </div>
+        )}
+
+        {/* Spotify connected but nothing playing — show idle state */}
+        {spotifyConnected && !spotifyTrack && (
+          <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
+            <SpotifyIcon className="w-8 h-8 text-green-500/40 mb-3" />
+            <p className="text-xs text-gray-500">Connected to Spotify. Play something in Spotify to see it here.</p>
+          </div>
+        )}
+
+        {/* Default Jamendo states — only show when Spotify not active */}
+        {!spotifyConnected && status === 'idle' && (
           <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
             <Music2 className="w-10 h-10 text-gray-700 mb-3" />
             <p className="text-xs text-gray-500 max-w-[200px]">Pick a genre to stream quiet, instrumental focus music.</p>
           </div>
         )}
 
-        {status === 'loading' && (
+        {!spotifyConnected && status === 'loading' && (
           <div className="flex-1 flex flex-col items-center justify-center py-8">
             <Loader2 className="w-8 h-8 text-cabin-accent animate-spin mb-3" />
             <p className="text-xs text-gray-400">Loading tracks…</p>
           </div>
         )}
 
-        {status === 'error' && (
+        {!spotifyConnected && status === 'error' && (
           <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
             <AlertCircle className="w-8 h-8 text-amber-400/60 mb-3" />
             <p className="text-xs text-amber-400/90">Music unavailable{error ? ` (${error})` : ''}.</p>
@@ -215,7 +288,7 @@ export function MusicPlayer() {
           </div>
         )}
 
-        {status === 'ready' && current && (
+        {!spotifyConnected && status === 'ready' && current && (
           <div className="flex-1 min-h-0 flex flex-col">
             {/* Track info — large display */}
             <div className="flex-1 min-h-0 flex flex-col items-center justify-center text-center py-4">
