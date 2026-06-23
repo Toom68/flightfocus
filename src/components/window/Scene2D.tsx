@@ -97,6 +97,8 @@ export function Scene2D({ solarData }: Scene2DProps) {
   const animRef = useRef<number>(0);
   const starsRef = useRef<Star[]>([]);
   const timeRef = useRef(0);
+  const solarRef = useRef(solarData);
+  solarRef.current = solarData;
 
   // Init stars once.
   useEffect(() => {
@@ -141,7 +143,7 @@ export function Scene2D({ solarData }: Scene2DProps) {
       const W = rect.width;
       const H = rect.height;
 
-      const sunAlt = solarData?.altitude ?? -20;
+      const sunAlt = solarRef.current?.altitude ?? -20;
 
       // --- Sky gradient (5 stops) ---
       const stops = getSkyStops(sunAlt);
@@ -159,7 +161,7 @@ export function Scene2D({ solarData }: Scene2DProps) {
         const glowStrength = Math.max(0, 1 - Math.abs(sunAlt) / 10);
         if (glowStrength > 0.01) {
           const sunY = H * (0.55 + (sunAlt / 90) * 0.3);
-          const sunX = W * (0.25 + ((solarData?.azimuth ?? 180) / 360) * 0.5);
+          const sunX = W * (0.25 + ((solarRef.current?.azimuth ?? 180) / 360) * 0.5);
           const glowR = W * 0.6;
           const glow = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, glowR);
           const isWarm = sunAlt < 10;
@@ -193,7 +195,7 @@ export function Scene2D({ solarData }: Scene2DProps) {
       cancelAnimationFrame(animRef.current);
       ro.disconnect();
     };
-  }, [solarData]);
+  }, []);
 
   return (
     <canvas
