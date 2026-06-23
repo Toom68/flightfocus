@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { Plane, Sun, Moon, MapPin } from 'lucide-react';
 import { useFlightStore } from '@/store/flightStore';
 import { getSolarPosition, formatTimeInTimezone } from '@/utils/time';
 import { SceneCanvas } from './window/SceneCanvas';
@@ -12,14 +13,26 @@ export function WindowView() {
     return getSolarPosition(position.lat, position.lng, simulationDate);
   }, [position.lat, position.lng, simulationDate]);
 
+  const isDay = solarData?.isDaytime ?? false;
+  const depTime = departure ? formatTimeInTimezone(simulationDate, departure.timezone) : '--:--';
+  const arrTime = arrival ? formatTimeInTimezone(simulationDate, arrival.timezone) : '--:--';
+  const hasMultipleTZ = departure && arrival && departure.timezone !== arrival.timezone;
+  const flightLevel = `FL${Math.round(position.altitude / 100).toString().padStart(3, '0')}`;
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="relative w-full h-full rounded-2xl overflow-hidden bg-black select-none"
+      className="relative w-full h-full rounded-2xl overflow-hidden bg-[#0a0a0d] select-none"
     >
-      {/* 3D scene (seen through the window aperture) */}
-      <div className="absolute inset-0">
+      {/* 3D scene clipped to the window opening */}
+      <div
+        className="absolute inset-0 overflow-hidden"
+        style={{
+          clipPath: 'inset(6% 12% 6% 12% round 28px)',
+          borderRadius: '28px',
+        }}
+      >
         <SceneCanvas
           altitude={position.altitude}
           phase={phase}
@@ -29,126 +42,121 @@ export function WindowView() {
         />
       </div>
 
-      {/* Cabin wall + window frame overlay */}
-      <CabinFrame />
+      {/* Cabin wall — dark gradient surrounding the window */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `
+            radial-gradient(ellipse 76% 88% at 50% 50%, transparent 0%, transparent 62%, #15151a 63%, #0e0e12 100%)
+          `,
+        }}
+      />
 
-      {/* Info overlay */}
-      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-        <span className="text-[10px] text-white/50 font-mono bg-black/40 px-2 py-0.5 rounded">
-          {solarData ? (solarData.isDaytime ? '☀' : '☾') : '—'}{' '}
-          {departure ? formatTimeInTimezone(simulationDate, departure.timezone) : '--:--'}
-          {departure && arrival && departure.timezone !== arrival.timezone && (
-            <> → {formatTimeInTimezone(simulationDate, arrival.timezone)}</>
-          )}
-          {' '}| FL{Math.round(position.altitude / 100).toString().padStart(3, '0')}
-        </span>
-        <span className="text-[10px] text-white/50 font-mono bg-black/40 px-2 py-0.5 rounded">
-          {position.lat.toFixed(1)}°, {position.lng.toFixed(1)}°
-        </span>
+      {/* Inner shadow — dark vignette just inside the window edge */}
+      <div
+        className="absolute inset-0 pointer-events-none flex items-center justify-center"
+      >
+        <div
+          className="relative"
+          style={{ width: '76%', height: '88%' }}
+        >
+          <div
+            className="absolute -inset-1 rounded-[32px]"
+            style={{
+              boxShadow: 'inset 0 0 30px 8px rgba(0,0,0,0.6), inset 0 0 4px 1px rgba(0,0,0,0.4)',
+            }}
+          />
+        </div>
       </div>
 
+      {/* Window bezel — outer frame */}
+      <div
+        className="absolute pointer-events-none flex items-center justify-center"
+        style={{ inset: '5.5% 11.5% 5.5% 11.5%' }}
+      >
+        <div
+          className="relative w-full h-full rounded-[30px]"
+          style={{
+            background: 'linear-gradient(135deg, #3a3a42 0%, #2a2a32 30%, #1e1e26 70%, #161620 100%)',
+            padding: '6px',
+          }}
+        >
+          {/* Inner trim ring */}
+          <div
+            className="w-full h-full rounded-[24px] relative overflow-hidden"
+            style={{
+              boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.06), inset 0 1px 2px rgba(255,255,255,0.04)',
+            }}
+          >
+            {/* Glass reflection — diagonal sheen */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'linear-gradient(125deg, rgba(200,220,255,0.08) 0%, rgba(200,220,255,0.02) 30%, transparent 50%, transparent 70%, rgba(255,255,255,0.03) 100%)',
+              }}
+            />
+
+            {/* Subtle vertical light streak */}
+            <motion.div
+              className="absolute inset-y-0 pointer-events-none"
+              style={{
+                width: '40%',
+                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent)',
+              }}
+              animate={{ x: ['-10%', '120%'] }}
+              transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', repeatDelay: 6 }}
+            />
+
+            {/* Bottom glass glow — warm cabin reflection */}
+            <div
+              className="absolute inset-x-0 bottom-0 h-1/4 pointer-events-none"
+              style={{
+                background: 'linear-gradient(to top, rgba(255,200,140,0.06), transparent)',
+              }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Top-right: phase indicator */}
+      <div className="absolute top-3 right-3 pointer-events-none">
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/[0.06]">
+          <Plane className="w-3 h-3 text-cabin-accent" />
+          <span className="text-[10px] font-medium text-white/70 tracking-wide uppercase">{phase}</span>
+        </div>
+      </div>
+
+      {/* Bottom-left: time + altitude */}
+      <div className="absolute bottom-3 left-3 pointer-events-none">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/50 backdrop-blur-md border border-white/[0.06]">
+          <div className="flex items-center gap-1.5">
+            {isDay ? (
+              <Sun className="w-3 h-3 text-amber-300/80" />
+            ) : (
+              <Moon className="w-3 h-3 text-blue-200/70" />
+            )}
+            <span className="text-[11px] font-mono text-white/70">{depTime}</span>
+            {hasMultipleTZ && (
+              <>
+                <span className="text-[10px] text-white/30">→</span>
+                <span className="text-[11px] font-mono text-white/50">{arrTime}</span>
+              </>
+            )}
+          </div>
+          <div className="w-px h-3 bg-white/10" />
+          <span className="text-[11px] font-mono text-cabin-accent/80">{flightLevel}</span>
+        </div>
+      </div>
+
+      {/* Bottom-right: coordinates */}
+      <div className="absolute bottom-3 right-3 pointer-events-none">
+        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-black/50 backdrop-blur-md border border-white/[0.06]">
+          <MapPin className="w-3 h-3 text-white/40" />
+          <span className="text-[10px] font-mono text-white/50">
+            {position.lat.toFixed(1)}°, {position.lng.toFixed(1)}°
+          </span>
+        </div>
+      </div>
     </motion.div>
-  );
-}
-
-// SVG cabin wall with a rounded window aperture cut out, plus bezel + glass
-// reflections. preserveAspectRatio="none" lets it fill any cell shape; the
-// opaque wall masks the 3D scene to just the window opening.
-function CabinFrame() {
-  // Window aperture geometry in viewBox units (0..100 x, 0..140 y).
-  const ap = { x: 21, y: 9, w: 58, h: 124, rx: 27, ry: 30 };
-
-  return (
-    <svg
-      className="absolute inset-0 w-full h-full pointer-events-none"
-      viewBox="0 0 100 140"
-      preserveAspectRatio="none"
-    >
-      <defs>
-        <radialGradient id="wallGrad" cx="50%" cy="50%" r="75%">
-          <stop offset="0%" stopColor="#2a2a30" />
-          <stop offset="55%" stopColor="#1e1e24" />
-          <stop offset="100%" stopColor="#121216" />
-        </radialGradient>
-
-        <linearGradient id="glassRefl" x1="0%" y1="0%" x2="60%" y2="45%">
-          <stop offset="0%" stopColor="rgba(190,210,235,0.10)" />
-          <stop offset="55%" stopColor="rgba(190,210,235,0.03)" />
-          <stop offset="100%" stopColor="rgba(190,210,235,0)" />
-        </linearGradient>
-
-        <linearGradient id="bezelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#4a4a55" />
-          <stop offset="50%" stopColor="#33333b" />
-          <stop offset="100%" stopColor="#26262d" />
-        </linearGradient>
-
-        {/* Mask: white = wall visible, black hole = window aperture */}
-        <mask id="windowHole">
-          <rect x="0" y="0" width="100" height="140" fill="white" />
-          <rect
-            x={ap.x}
-            y={ap.y}
-            width={ap.w}
-            height={ap.h}
-            rx={ap.rx}
-            ry={ap.ry}
-            fill="black"
-          />
-        </mask>
-
-        {/* Clip for drawing reflections only inside the glass */}
-        <clipPath id="glassClip">
-          <rect x={ap.x} y={ap.y} width={ap.w} height={ap.h} rx={ap.rx} ry={ap.ry} />
-        </clipPath>
-      </defs>
-
-      {/* Cabin wall (everything outside the aperture) */}
-      <rect x="0" y="0" width="100" height="140" fill="url(#wallGrad)" mask="url(#windowHole)" />
-
-      {/* Subtle inner shadow ring just inside the wall opening */}
-      <rect
-        x={ap.x}
-        y={ap.y}
-        width={ap.w}
-        height={ap.h}
-        rx={ap.rx}
-        ry={ap.ry}
-        fill="none"
-        stroke="rgba(0,0,0,0.55)"
-        strokeWidth="2.5"
-      />
-
-      {/* Subtle glass sheen inside the aperture (no hard reflections) */}
-      <g clipPath="url(#glassClip)">
-        <rect x={ap.x} y={ap.y} width={ap.w} height={ap.h} fill="url(#glassRefl)" />
-      </g>
-
-      {/* Outer bezel */}
-      <rect
-        x={ap.x - 2.5}
-        y={ap.y - 2.5}
-        width={ap.w + 5}
-        height={ap.h + 5}
-        rx={ap.rx + 2.5}
-        ry={ap.ry + 2.5}
-        fill="none"
-        stroke="url(#bezelGrad)"
-        strokeWidth="5"
-      />
-
-      {/* Inner bezel highlight */}
-      <rect
-        x={ap.x}
-        y={ap.y}
-        width={ap.w}
-        height={ap.h}
-        rx={ap.rx}
-        ry={ap.ry}
-        fill="none"
-        stroke="rgba(120,130,150,0.35)"
-        strokeWidth="0.8"
-      />
-    </svg>
   );
 }
