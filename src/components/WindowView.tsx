@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Plane, Sun, Moon, MapPin } from 'lucide-react';
 import { useFlightStore } from '@/store/flightStore';
 import { getSolarPosition, formatTimeInTimezone } from '@/utils/time';
-import { SceneCanvas } from './window/SceneCanvas';
+import { Scene2D } from './window/Scene2D';
 
 export function WindowView() {
   const { position, phase, simulationDate, departure, arrival } = useFlightStore();
@@ -27,7 +27,7 @@ export function WindowView() {
     >
       {/* 3D scene — fills entire container, we mask the edges with the wall on top */}
       <div className="absolute inset-0">
-        <SceneCanvas
+        <Scene2D
           altitude={position.altitude}
           phase={phase}
           speed={position.speed}
