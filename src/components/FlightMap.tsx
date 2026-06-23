@@ -57,32 +57,35 @@ function FollowUpdater({
   position: [number, number];
 }) {
   const map = useMap();
-  const posRef = useRef(position);
-  posRef.current = position;
+  const followRef = useRef(follow);
+  followRef.current = follow;
 
   // When follow turns on, pan to plane (keep current zoom).
   useEffect(() => {
     if (follow) {
-      map.panTo(posRef.current, { animate: true, duration: 1.0 });
+      map.panTo(position, { animate: true, duration: 1.0 });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [follow, map]);
 
-  // While following, keep plane centered on every position update —
-  // but don't change zoom (user controls zoom freely).
+  // While following, keep plane centered on every position update.
   useEffect(() => {
     if (!follow) return;
     map.panTo(position, { animate: true, duration: 0.8 });
   }, [follow, position, map]);
 
-  // If the user drags the map, turn off follow.
+  // Instantly exit follow mode on any manual map interaction.
   useEffect(() => {
-    if (!follow) return;
-    const onDragStart = () => setFollow(false);
-    map.on('dragstart', onDragStart);
-    return () => {
-      map.off('dragstart', onDragStart);
+    const onUserMove = () => {
+      if (followRef.current) setFollow(false);
     };
-  }, [follow, map, setFollow]);
+    map.on('dragstart', onUserMove);
+    map.on('zoomstart', onUserMove);
+    return () => {
+      map.off('dragstart', onUserMove);
+      map.off('zoomstart', onUserMove);
+    };
+  }, [map, setFollow]);
 
   return null;
 }
