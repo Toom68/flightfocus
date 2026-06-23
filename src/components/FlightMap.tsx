@@ -47,13 +47,43 @@ function MapUpdater({ center, zoom }: { center: [number, number]; zoom: number }
   return null;
 }
 
-function FollowUpdater({ follow, position }: { follow: boolean; position: [number, number] }) {
+function FollowUpdater({
+  follow,
+  setFollow,
+  position,
+}: {
+  follow: boolean;
+  setFollow: (f: boolean) => void;
+  position: [number, number];
+}) {
   const map = useMap();
+  const posRef = useRef(position);
+  posRef.current = position;
+
+  // When follow turns on, pan to plane (keep current zoom).
   useEffect(() => {
     if (follow) {
-      map.setView(position, Math.max(map.getZoom(), 8), { animate: true, duration: 1.5 });
+      map.panTo(posRef.current, { animate: true, duration: 1.0 });
     }
+  }, [follow, map]);
+
+  // While following, keep plane centered on every position update —
+  // but don't change zoom (user controls zoom freely).
+  useEffect(() => {
+    if (!follow) return;
+    map.panTo(position, { animate: true, duration: 0.8 });
   }, [follow, position, map]);
+
+  // If the user drags the map, turn off follow.
+  useEffect(() => {
+    if (!follow) return;
+    const onDragStart = () => setFollow(false);
+    map.on('dragstart', onDragStart);
+    return () => {
+      map.off('dragstart', onDragStart);
+    };
+  }, [follow, map, setFollow]);
+
   return null;
 }
 
@@ -101,7 +131,7 @@ export function FlightMap() {
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
         <MapUpdater center={[centerLat, centerLng]} zoom={zoom} />
-        <FollowUpdater follow={follow} position={[position.lat, position.lng]} />
+        <FollowUpdater follow={follow} setFollow={setFollow} position={[position.lat, position.lng]} />
 
         <Polyline
           positions={routeLatLngs}
