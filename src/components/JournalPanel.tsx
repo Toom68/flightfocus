@@ -6,7 +6,7 @@ import { JournalView } from './JournalView';
 
 export function JournalPanel() {
   const save = useSavegameStore((s) => s.saves.find((x) => x.id === s.activeSaveId));
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
 
   if (!save) return null;
 

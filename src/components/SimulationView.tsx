@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Timer, Wand2, Music2, BookOpen } from 'lucide-react';
 import { useFlightStore } from '@/store/flightStore';
 import { useFocusStore } from '@/store/focusStore';
 import { WindowView } from './WindowView';
@@ -12,11 +13,21 @@ import { SimulationControls } from './SimulationControls';
 import { JournalPanel } from './JournalPanel';
 import { ArrivalModal } from './ArrivalModal';
 
+type SidebarTab = 'focus' | 'audio' | 'music' | 'journal';
+
+const TABS: { id: SidebarTab; label: string; icon: typeof Timer }[] = [
+  { id: 'focus', label: 'Focus', icon: Timer },
+  { id: 'audio', label: 'Sound', icon: Wand2 },
+  { id: 'music', label: 'Music', icon: Music2 },
+  { id: 'journal', label: 'Journal', icon: BookOpen },
+];
+
 export function SimulationView() {
   const { tick, isActive, isPaused, phase } = useFlightStore();
   const { isMinimalUI } = useFocusStore();
   const lastTimeRef = useRef<number>(performance.now());
   const frameRef = useRef<number>(0);
+  const [activeTab, setActiveTab] = useState<SidebarTab>('focus');
 
   useEffect(() => {
     if (!isActive || isPaused) return;
@@ -64,13 +75,42 @@ export function SimulationView() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="w-full lg:w-80 p-3 space-y-4 overflow-y-auto border-t lg:border-t-0 lg:border-l border-white/[0.04]"
+          className="w-full lg:w-80 p-3 flex flex-col gap-3 border-t lg:border-t-0 lg:border-l border-white/[0.04] overflow-hidden"
         >
           <SimulationControls />
-          <FocusTimer />
-          <JournalPanel />
-          <AudioMixer />
-          <MusicPlayer />
+
+          {/* Tab bar */}
+          <div className="flex gap-1 bg-cabin-dim/40 rounded-lg p-1 shrink-0">
+            {TABS.map((t) => {
+              const Icon = t.icon;
+              const active = activeTab === t.id;
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => setActiveTab(t.id)}
+                  className={`flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-md text-[10px] font-medium transition-all duration-200 ${
+                    active ? 'bg-cabin-accent/20 text-cabin-accent' : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  {t.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Active panel — only one visible at a time, no scroll needed */}
+          <div className="flex-1 min-h-0 overflow-y-auto">
+            {activeTab === 'focus' && <FocusTimer />}
+            {activeTab === 'journal' && <JournalPanel />}
+            {/* Audio + Music stay mounted but hidden to keep audio playing */}
+            <div className={activeTab === 'audio' ? '' : 'hidden'}>
+              <AudioMixer />
+            </div>
+            <div className={activeTab === 'music' ? '' : 'hidden'}>
+              <MusicPlayer />
+            </div>
+          </div>
         </motion.aside>
       )}
 
