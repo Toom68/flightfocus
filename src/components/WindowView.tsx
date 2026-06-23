@@ -25,14 +25,8 @@ export function WindowView() {
       animate={{ opacity: 1 }}
       className="relative w-full h-full rounded-2xl overflow-hidden bg-[#0a0a0d] select-none"
     >
-      {/* 3D scene clipped to the window opening */}
-      <div
-        className="absolute inset-0 overflow-hidden"
-        style={{
-          clipPath: 'inset(6% 12% 6% 12% round 28px)',
-          borderRadius: '28px',
-        }}
-      >
+      {/* 3D scene — fills entire container, we mask the edges with the wall on top */}
+      <div className="absolute inset-0">
         <SceneCanvas
           altitude={position.altitude}
           phase={phase}
@@ -42,79 +36,63 @@ export function WindowView() {
         />
       </div>
 
-      {/* Cabin wall — dark gradient surrounding the window */}
+      {/* Cabin wall — opaque border surrounding the window opening.
+          Uses box-shadow to create a thick frame without covering the center. */}
       <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `
-            radial-gradient(ellipse 76% 88% at 50% 50%, transparent 0%, transparent 62%, #15151a 63%, #0e0e12 100%)
-          `,
-        }}
-      />
-
-      {/* Inner shadow — dark vignette just inside the window edge */}
-      <div
-        className="absolute inset-0 pointer-events-none flex items-center justify-center"
+        className="absolute pointer-events-none flex items-center justify-center"
+        style={{ inset: 0 }}
       >
         <div
           className="relative"
-          style={{ width: '76%', height: '88%' }}
-        >
-          <div
-            className="absolute -inset-1 rounded-[32px]"
-            style={{
-              boxShadow: 'inset 0 0 30px 8px rgba(0,0,0,0.6), inset 0 0 4px 1px rgba(0,0,0,0.4)',
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Window bezel — outer frame */}
-      <div
-        className="absolute pointer-events-none flex items-center justify-center"
-        style={{ inset: '5.5% 11.5% 5.5% 11.5%' }}
-      >
-        <div
-          className="relative w-full h-full rounded-[30px]"
           style={{
-            background: 'linear-gradient(135deg, #3a3a42 0%, #2a2a32 30%, #1e1e26 70%, #161620 100%)',
-            padding: '6px',
+            width: '76%',
+            height: '88%',
+            borderRadius: '28px',
+            boxShadow: '0 0 0 100vmax #0e0e12, 0 0 0 6px #2a2a32, 0 0 0 7px #3a3a42',
           }}
         >
-          {/* Inner trim ring */}
+          {/* Inner shadow vignette inside the window */}
           <div
-            className="w-full h-full rounded-[24px] relative overflow-hidden"
+            className="absolute -inset-0 rounded-[28px] pointer-events-none"
             style={{
-              boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.06), inset 0 1px 2px rgba(255,255,255,0.04)',
+              boxShadow: 'inset 0 0 24px 6px rgba(0,0,0,0.5)',
             }}
-          >
-            {/* Glass reflection — diagonal sheen */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background: 'linear-gradient(125deg, rgba(200,220,255,0.08) 0%, rgba(200,220,255,0.02) 30%, transparent 50%, transparent 70%, rgba(255,255,255,0.03) 100%)',
-              }}
-            />
+          />
 
-            {/* Subtle vertical light streak */}
-            <motion.div
-              className="absolute inset-y-0 pointer-events-none"
-              style={{
-                width: '40%',
-                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent)',
-              }}
-              animate={{ x: ['-10%', '120%'] }}
-              transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', repeatDelay: 6 }}
-            />
+          {/* Glass reflection — diagonal sheen */}
+          <div
+            className="absolute inset-0 rounded-[28px] pointer-events-none overflow-hidden"
+            style={{
+              background: 'linear-gradient(125deg, rgba(200,220,255,0.08) 0%, rgba(200,220,255,0.02) 30%, transparent 50%, transparent 70%, rgba(255,255,255,0.03) 100%)',
+            }}
+          />
 
-            {/* Bottom glass glow — warm cabin reflection */}
-            <div
-              className="absolute inset-x-0 bottom-0 h-1/4 pointer-events-none"
-              style={{
-                background: 'linear-gradient(to top, rgba(255,200,140,0.06), transparent)',
-              }}
-            />
-          </div>
+          {/* Subtle vertical light streak */}
+          <motion.div
+            className="absolute inset-y-0 pointer-events-none"
+            style={{
+              width: '40%',
+              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent)',
+            }}
+            animate={{ x: ['-10%', '120%'] }}
+            transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', repeatDelay: 6 }}
+          />
+
+          {/* Bottom glass glow — warm cabin reflection */}
+          <div
+            className="absolute inset-x-0 bottom-0 h-1/4 pointer-events-none rounded-b-[28px]"
+            style={{
+              background: 'linear-gradient(to top, rgba(255,200,140,0.06), transparent)',
+            }}
+          />
+
+          {/* Inner trim highlight ring */}
+          <div
+            className="absolute inset-0 rounded-[28px] pointer-events-none"
+            style={{
+              boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.06)',
+            }}
+          />
         </div>
       </div>
 
