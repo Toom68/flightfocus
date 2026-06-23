@@ -233,54 +233,21 @@ export function MusicPlayer() {
 
       {/* Main content area */}
       <div className="flex-1 min-h-0 flex flex-col">
-        {/* Spotify track display — takes priority when connected & playing */}
-        {spotifyConnected && spotifyTrack && (
-          <div className="flex-1 min-h-0 flex flex-col items-center justify-center text-center py-4">
-            <motion.div
-              key={spotifyTrack.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="w-20 h-20 rounded-2xl bg-cabin-dim/40 border border-white/[0.06] flex items-center justify-center mb-4 overflow-hidden shadow-glow"
-            >
-              {spotifyTrack.albumArt ? (
-                <img src={spotifyTrack.albumArt} alt="" className="w-full h-full object-cover" />
-              ) : (
-                <SpotifyIcon className="w-8 h-8 text-green-500/70" />
-              )}
-            </motion.div>
-            <p className="text-sm font-medium text-white max-w-full truncate px-2">{spotifyTrack.title}</p>
-            <p className="text-xs text-gray-500 max-w-full truncate px-2 mt-0.5">{spotifyTrack.artist}</p>
-            <div className="flex items-center gap-1.5 mt-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-[10px] text-green-500/80 font-mono">Spotify</span>
-            </div>
-          </div>
-        )}
-
-        {/* Spotify connected but nothing playing — show idle state */}
-        {spotifyConnected && !spotifyTrack && (
-          <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
-            <SpotifyIcon className="w-8 h-8 text-green-500/40 mb-3" />
-            <p className="text-xs text-gray-500">Connected to Spotify. Play something in Spotify to see it here.</p>
-          </div>
-        )}
-
-        {/* Default Jamendo states — only show when Spotify not active */}
-        {!spotifyConnected && status === 'idle' && (
+        {status === 'idle' && !spotifyConnected && (
           <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
             <Music2 className="w-10 h-10 text-gray-700 mb-3" />
             <p className="text-xs text-gray-500 max-w-[200px]">Pick a genre to stream quiet, instrumental focus music.</p>
           </div>
         )}
 
-        {!spotifyConnected && status === 'loading' && (
+        {status === 'loading' && (
           <div className="flex-1 flex flex-col items-center justify-center py-8">
             <Loader2 className="w-8 h-8 text-cabin-accent animate-spin mb-3" />
             <p className="text-xs text-gray-400">Loading tracks…</p>
           </div>
         )}
 
-        {!spotifyConnected && status === 'error' && (
+        {status === 'error' && !spotifyConnected && (
           <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
             <AlertCircle className="w-8 h-8 text-amber-400/60 mb-3" />
             <p className="text-xs text-amber-400/90">Music unavailable{error ? ` (${error})` : ''}.</p>
@@ -288,23 +255,44 @@ export function MusicPlayer() {
           </div>
         )}
 
-        {!spotifyConnected && status === 'ready' && current && (
+        {/* Unified track display — works for both Jamendo and Spotify */}
+        {((status === 'ready' && current) || (spotifyConnected && spotifyTrack)) && (
           <div className="flex-1 min-h-0 flex flex-col">
-            {/* Track info — large display */}
+            {/* Track info — same layout, swapped content */}
             <div className="flex-1 min-h-0 flex flex-col items-center justify-center text-center py-4">
               <motion.div
-                key={current.id}
+                key={spotifyActive ? spotifyTrack!.id : current?.id}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cabin-accent/30 to-cabin-dim/40 border border-white/[0.06] flex items-center justify-center mb-4 shadow-glow"
+                className="w-20 h-20 rounded-2xl border border-white/[0.06] flex items-center justify-center mb-4 overflow-hidden shadow-glow"
               >
-                <Music2 className="w-8 h-8 text-cabin-accent/70" />
+                {spotifyActive ? (
+                  spotifyTrack!.albumArt ? (
+                    <img src={spotifyTrack!.albumArt} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <SpotifyIcon className="w-8 h-8 text-green-500/70" />
+                  )
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-cabin-accent/30 to-cabin-dim/40 flex items-center justify-center">
+                    <Music2 className="w-8 h-8 text-cabin-accent/70" />
+                  </div>
+                )}
               </motion.div>
-              <p className="text-sm font-medium text-white max-w-full truncate px-2">{current.title}</p>
-              <p className="text-xs text-gray-500 max-w-full truncate px-2 mt-0.5">{current.artist}</p>
+              <p className="text-sm font-medium text-white max-w-full truncate px-2">
+                {spotifyActive ? spotifyTrack!.title : current?.title}
+              </p>
+              <p className="text-xs text-gray-500 max-w-full truncate px-2 mt-0.5">
+                {spotifyActive ? spotifyTrack!.artist : current?.artist}
+              </p>
+              {spotifyActive && (
+                <div className="flex items-center gap-1.5 mt-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-[10px] text-green-500/80 font-mono">Spotify</span>
+                </div>
+              )}
             </div>
 
-            {/* Playback controls */}
+            {/* Playback controls — same for both */}
             <div className="flex items-center justify-center gap-3 py-3 shrink-0">
               <button
                 onClick={prev}
@@ -326,8 +314,16 @@ export function MusicPlayer() {
               </button>
             </div>
             <div className="text-center text-[10px] text-gray-600 font-mono shrink-0">
-              {index + 1} / {tracks.length}
+              {spotifyActive ? 'via Spotify' : `${index + 1} / ${tracks.length}`}
             </div>
+          </div>
+        )}
+
+        {/* Spotify connected but nothing playing */}
+        {spotifyConnected && !spotifyTrack && status !== 'ready' && (
+          <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
+            <SpotifyIcon className="w-8 h-8 text-green-500/40 mb-3" />
+            <p className="text-xs text-gray-500">Connected to Spotify. Play something in Spotify to see it here.</p>
           </div>
         )}
       </div>
