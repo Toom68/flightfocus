@@ -34,13 +34,10 @@ export const handler: Handler = async (event) => {
     };
 
     const prompt = [
-      `Write a short travel journal entry (3-4 evocative sentences, first person, past tense).`,
-      `The narrator is a quiet remote worker who set up with headphones in ${from.city}, ${from.country} —`,
-      `the kind of person who works from a cafe or hotel room and watches the city drift past.`,
-      `${durationFlavour(ambientMinutes)} They are now flying onward to ${to.city}, ${to.country}.`,
-      `Include exactly one specific sensory detail about ${from.city} — a smell, a sound, or a view from a window.`,
-      `Avoid cliches and tourist-brochure language. Do not mention work, laptops, or productivity directly.`,
-      `Keep it under 80 words. Return only the entry text, no title or quotation marks.`,
+      `Write a single travel journal entry — at most 2 sentences, first person, past tense.`,
+      `The narrator is leaving ${from.city}, ${from.country} after ${durationFlavour(ambientMinutes).toLowerCase().replace('they ', 'i ')} Now flying onward to ${to.city}, ${to.country}.`,
+      `Include one specific sensory detail about ${from.city} — a sound, a smell, or something seen from a window.`,
+      `No cliches, no tourist language, no mention of work or laptops. Under 40 words. Return only the entry text.`,
     ].join(' ');
 
     const controller = new AbortController();
