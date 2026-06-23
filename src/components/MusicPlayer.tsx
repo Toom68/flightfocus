@@ -16,11 +16,13 @@ const GENRES: { id: MusicGenre; label: string; icon: typeof Piano }[] = [
 ];
 
 const EQ_BANDS = [
-  { freq: '60Hz', label: 'Bass' },
-  { freq: '250Hz', label: 'Low Mid' },
-  { freq: '1kHz', label: 'Mid' },
-  { freq: '4kHz', label: 'High Mid' },
-  { freq: '12kHz', label: 'Treble' },
+  { freq: 60, label: '60' },
+  { freq: 170, label: '170' },
+  { freq: 350, label: '350' },
+  { freq: 1000, label: '1k' },
+  { freq: 3500, label: '3.5k' },
+  { freq: 8000, label: '8k' },
+  { freq: 16000, label: '16k' },
 ] as const;
 
 export function MusicPlayer() {
@@ -29,7 +31,7 @@ export function MusicPlayer() {
     loadGenre, toggle, next, prev, setVolume,
   } = useMusicStore();
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [eqValues, setEqValues] = useState<number[]>([0, 0, 0, 0, 0]);
+  const [eqValues, setEqValues] = useState<number[]>([0, 0, 0, 0, 0, 0, 0]);
   const [showEq, setShowEq] = useState(false);
 
   const current = tracks[index];
@@ -69,31 +71,53 @@ export function MusicPlayer() {
     if (audioRef.current) audioRef.current.volume = volume;
   }, [volume]);
 
-  // Apply EQ via Web Audio API filter chain (simple gain-based approximation)
-  // EQ values are -12 to +12 dB, visualized as vertical sliders
+  // Apply EQ via Web Audio API filter chain — initialize once on mount.
   const eqRef = useRef<{ ctx: AudioContext; filters: BiquadFilterNode[] } | null>(null);
+  const eqValuesRef = useRef(eqValues);
+  eqValuesRef.current = eqValues;
+
   useEffect(() => {
-    if (!audioRef.current || showEq === false) return;
-    if (!eqRef.current) {
-      const el = audioRef.current;
-      const ctx = new AudioContext();
-      const source = ctx.createMediaElementSource(el);
-      const freqs = [60, 250, 1000, 4000, 12000];
-      const filters = freqs.map((freq, i) => {
-        const f = ctx.createBiquadFilter();
-        f.type = i === 0 ? 'lowshelf' : i === freqs.length - 1 ? 'highshelf' : 'peaking';
-        f.frequency.value = freq;
-        f.Q.value = 1;
-        f.gain.value = eqValues[i];
-        return f;
-      });
-      source.connect(filters[0]);
-      filters.reduce((a, b) => { a.connect(b); return b; });
-      filters[filters.length - 1].connect(ctx.destination);
-      eqRef.current = { ctx, filters };
+    const el = audioRef.current;
+    if (!el) return;
+
+    const ctx = new AudioContext();
+    let source: MediaElementAudioSourceNode;
+    try {
+      source = ctx.createMediaElementSource(el);
+    } catch {
+      // Source already created — can't create twice, abort.
+      ctx.close();
+      return;
     }
-    eqRef.current.filters.forEach((f, i) => { f.gain.value = eqValues[i]; });
-  }, [eqValues, showEq]);
+
+    const freqs = EQ_BANDS.map((b) => b.freq);
+    const filters = freqs.map((freq, i) => {
+      const f = ctx.createBiquadFilter();
+      f.type = i === 0 ? 'lowshelf' : i === freqs.length - 1 ? 'highshelf' : 'peaking';
+      f.frequency.value = freq;
+      f.Q.value = 1;
+      f.gain.value = eqValuesRef.current[i] ?? 0;
+      return f;
+    });
+
+    source.connect(filters[0]);
+    filters.reduce((a, b) => { a.connect(b); return b; });
+    filters[filters.length - 1].connect(ctx.destination);
+    eqRef.current = { ctx, filters };
+
+    return () => {
+      // Don't close ctx on unmount — it would break audio.
+      // The source node can't be disconnected once created.
+    };
+  }, []);
+
+  // Update filter gains when EQ values change.
+  useEffect(() => {
+    if (!eqRef.current) return;
+    eqRef.current.filters.forEach((f, i) => {
+      f.gain.value = eqValues[i] ?? 0;
+    });
+  }, [eqValues]);
 
   return (
     <motion.div
@@ -222,7 +246,7 @@ export function MusicPlayer() {
         )}
       </div>
 
-      {/* 5-band EQ — pinned at bottom */}
+      {/* 7-band EQ — pinned at bottom, sized like simulation controls */}
       <AnimatePresence>
         {showEq && (
           <motion.div
@@ -233,20 +257,21 @@ export function MusicPlayer() {
           >
             <div className="pt-3 mt-3 border-t border-white/[0.04]">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] uppercase tracking-wider text-gray-500">Equalizer</span>
+                <span className="text-[10px] uppercase tracking-wider text-gray-500">Equalizer · Hz</span>
                 <button
-                  onClick={() => setEqValues([0, 0, 0, 0, 0])}
+                  onClick={() => setEqValues([0, 0, 0, 0, 0, 0, 0])}
                   className="text-[10px] text-gray-500 hover:text-cabin-accent transition-colors"
                 >
                   Reset
                 </button>
               </div>
-              <div className="flex justify-between gap-1">
+              <div className="grid grid-cols-7 gap-1">
                 {EQ_BANDS.map((band, i) => (
-                  <div key={band.freq} className="flex flex-col items-center gap-1 flex-1">
-                    <div className="relative h-20 flex items-center justify-center">
-                      {/* Center line */}
-                      <div className="absolute inset-x-0 top-1/2 h-px bg-white/[0.06]" />
+                  <div key={band.freq} className="flex flex-col items-center gap-1">
+                    {/* Vertical slider column */}
+                    <div className="relative h-16 flex items-center justify-center bg-cabin-dim/30 rounded">
+                      {/* Center reference line */}
+                      <div className="absolute inset-x-1 top-1/2 h-px bg-white/[0.08]" />
                       <input
                         type="range"
                         min="-12"
@@ -261,15 +286,21 @@ export function MusicPlayer() {
                             return next;
                           });
                         }}
-                        className="absolute h-16 w-2 appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-cabin-accent [&::-webkit-slider-thumb]:shadow"
+                        className="eq-vertical-slider"
                         style={{
                           writingMode: 'vertical-lr' as const,
                           direction: 'rtl',
+                          width: '100%',
+                          height: '56px',
+                          appearance: 'none',
+                          WebkitAppearance: 'none',
+                          background: 'transparent',
+                          cursor: 'pointer',
                         }}
                       />
                     </div>
-                    <span className="text-[8px] text-gray-500 font-mono">{band.freq}</span>
-                    <span className="text-[8px] text-gray-600">{band.label}</span>
+                    {/* Hz label under each column */}
+                    <span className="text-[9px] text-gray-500 font-mono leading-none">{band.label}</span>
                   </div>
                 ))}
               </div>
