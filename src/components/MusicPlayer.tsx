@@ -105,11 +105,23 @@ export function MusicPlayer() {
     filters[filters.length - 1].connect(ctx.destination);
     eqRef.current = { ctx, filters };
 
+    // Resume context on any user interaction (browsers suspend it by default).
+    const resumeCtx = () => { void ctx.resume(); };
+    document.addEventListener('click', resumeCtx);
+    document.addEventListener('touchstart', resumeCtx);
+
     return () => {
-      // Don't close ctx on unmount — it would break audio.
-      // The source node can't be disconnected once created.
+      document.removeEventListener('click', resumeCtx);
+      document.removeEventListener('touchstart', resumeCtx);
     };
   }, []);
+
+  // Also resume the AudioContext when playback starts.
+  useEffect(() => {
+    if (isPlaying && eqRef.current?.ctx.state === 'suspended') {
+      void eqRef.current.ctx.resume();
+    }
+  }, [isPlaying]);
 
   // Update filter gains when EQ values change.
   useEffect(() => {
@@ -129,6 +141,7 @@ export function MusicPlayer() {
         ref={audioRef}
         onEnded={next}
         preload="auto"
+        crossOrigin="anonymous"
         onWaiting={() => setBuffering(true)}
         onPlaying={() => setBuffering(false)}
         onCanPlay={() => setBuffering(false)}
