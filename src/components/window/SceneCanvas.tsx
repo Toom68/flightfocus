@@ -4,10 +4,12 @@ import * as THREE from 'three';
 import type { getSolarPosition } from '@/utils/time';
 import { Sky3D } from './Sky3D';
 import { StylizedGround } from './StylizedGround';
-import { CloudField } from './CloudField';
+import { RealisticCloudField } from './RealisticCloudField';
 import { AircraftWing } from './AircraftWing';
 import { CameraRig } from './CameraRig';
 import { useFrame } from '@react-three/fiber';
+import type { WeatherCondition } from '@/types/weather';
+import { cloudDensity, isOvercast as isOvercastCondition } from '@/types/weather';
 
 type SolarData = ReturnType<typeof getSolarPosition> | null;
 
@@ -17,6 +19,7 @@ interface SceneCanvasProps {
   speed: number;
   progress: number;
   solarData: SolarData;
+  weatherCondition?: WeatherCondition;
 }
 
 // Convert solar altitude/azimuth (degrees) into a normalized direction vector.
@@ -68,7 +71,10 @@ function SunLight({
   );
 }
 
-export function SceneCanvas({ altitude, phase, speed, progress, solarData }: SceneCanvasProps) {
+export function SceneCanvas({ altitude, phase, speed, progress, solarData, weatherCondition }: SceneCanvasProps) {
+  const weatherCond = weatherCondition ?? 'clear';
+  const density = cloudDensity(weatherCond);
+  const overcast = isOvercastCondition(weatherCond);
   const sunAltDeg = solarData ? solarData.altitude : -20;
   const sunAzDeg = solarData ? solarData.azimuth : 180;
   const isDaytime = solarData ? solarData.isDaytime : false;
@@ -139,7 +145,14 @@ export function SceneCanvas({ altitude, phase, speed, progress, solarData }: Sce
 
       <StylizedGround altitude={altitude} speed={speed} phase={phase} horizonColor={horizonColor} groundColor={groundColor} />
 
-      <CloudField altitude={altitude} sunNorm={sunNorm} warmth={warmth} cloudColor={cloudColor} />
+      <RealisticCloudField
+        altitude={altitude}
+        sunNorm={sunNorm}
+        warmth={warmth}
+        cloudColor={cloudColor}
+        cloudDensity={density}
+        isOvercast={overcast}
+      />
 
       <AircraftWing phase={phase} altitude={altitude} isDaytime={isDaytime} />
 

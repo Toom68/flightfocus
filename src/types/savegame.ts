@@ -32,6 +32,7 @@ export interface SaveStats {
   longestFlightKm: number;
   shortestFlightKm: number;
   maxCruiseMinutesInLeg: number;
+  miles: number; // frequent flyer miles earned from flights + focus time
 }
 
 export interface SaveGame {
@@ -56,5 +57,11 @@ export function createEmptySaveStats(): SaveStats {
     longestFlightKm: 0,
     shortestFlightKm: Infinity,
     maxCruiseMinutesInLeg: 0,
+    miles: 0,
   };
+}
+
+// Award miles: 1 mile per km flown + 2 miles per real focus minute.
+export function calculateMilesEarned(distanceKm: number, ambientMinutes: number): number {
+  return Math.round(distanceKm + ambientMinutes * 2);
 }

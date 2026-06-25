@@ -1,11 +1,14 @@
 import { motion } from 'framer-motion';
-import { Plane, Clock, Navigation, Gauge, Mountain } from 'lucide-react';
+import { Plane, Clock, Navigation, Gauge, Mountain, Award } from 'lucide-react';
 import { useFlightStore } from '@/store/flightStore';
+import { useSavegameStore } from '@/store/savegameStore';
 import { getPhaseDescription, formatDuration, formatDistance } from '@/engine/simulation';
 import { formatTimeInTimezone } from '@/utils/time';
 
 export function FlightInfo() {
   const { phase, position, route, progress, simulationDate, departure, arrival } = useFlightStore();
+  const activeSave = useSavegameStore((s) => s.saves.find((x) => x.id === s.activeSaveId));
+  const totalMiles = activeSave?.stats.miles ?? 0;
 
   if (!route) return null;
 
@@ -74,6 +77,15 @@ export function FlightInfo() {
         <span>{formatDistance(route.distance - position.distanceRemaining)} flown</span>
         <span>{formatDistance(position.distanceRemaining)} remaining</span>
       </div>
+
+      {totalMiles > 0 && (
+        <div className="mt-2 pt-2 border-t border-white/[0.04] flex items-center justify-between text-xs">
+          <span className="flex items-center gap-1 text-cabin-gold/80">
+            <Award className="w-3 h-3" /> Frequent Flyer Miles
+          </span>
+          <span className="font-mono text-cabin-gold">{totalMiles.toLocaleString()}</span>
+        </div>
+      )}
 
       {departure && arrival && (
         <div className="mt-2 pt-2 border-t border-white/[0.04] flex items-center justify-between text-xs">

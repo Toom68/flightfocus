@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plane, Plus, Trash2, MapPin, Clock, Trophy, ArrowRight, X } from 'lucide-react';
+import { Plane, Plus, Trash2, MapPin, Clock, Trophy, ArrowRight, X, Award } from 'lucide-react';
 import { useSavegameStore, MAX_SAVES } from '@/store/savegameStore';
 import { useFlightStore } from '@/store/flightStore';
 import { useSpotifyStore } from '@/store/spotifyStore';
@@ -121,6 +121,9 @@ export function HomeScreen() {
                       <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{uniqueAirportCount(save)}</span>
                       <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{formatHours(save.stats.totalAmbientMinutes)}</span>
                       <span className="flex items-center gap-1"><Trophy className="w-3 h-3" />{save.unlockedAchievements.length}</span>
+                      {save.stats.miles > 0 && (
+                        <span className="flex items-center gap-1 text-cabin-gold/70"><Award className="w-3 h-3" />{save.stats.miles.toLocaleString()}</span>
+                      )}
                       <span className="ml-auto">{relativeTime(save.lastPlayedAt)}</span>
                     </div>
                   </div>

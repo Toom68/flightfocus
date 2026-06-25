@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plane, BookOpen, Trophy, Route, ChevronLeft, Navigation } from 'lucide-react';
+import { Plane, BookOpen, Trophy, Route, ChevronLeft, Navigation, Award } from 'lucide-react';
 import { useSavegameStore } from '@/store/savegameStore';
 import { useFlightStore } from '@/store/flightStore';
 import type { Airport } from '@/types/airport';
@@ -84,6 +84,13 @@ export function GroundedView() {
                   <p className="text-xs text-gray-500 mt-1">
                     <span className="font-mono">{here.iata}</span> · {getContinent(here)} · {here.country}
                   </p>
+                  {save.stats.miles > 0 && (
+                    <p className="text-xs mt-1.5 flex items-center gap-1.5 text-cabin-gold/80">
+                      <Award className="w-3.5 h-3.5" />
+                      <span className="font-mono text-cabin-gold">{save.stats.miles.toLocaleString()}</span>
+                      <span className="text-gray-500">frequent flyer miles</span>
+                    </p>
+                  )}
                 </div>
               </div>
 

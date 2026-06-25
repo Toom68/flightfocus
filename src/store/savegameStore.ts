@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Airport } from '@/types/airport';
 import type { SaveGame, VisitedAirport, JournalEntry } from '@/types/savegame';
-import { createEmptySaveStats } from '@/types/savegame';
+import { createEmptySaveStats, calculateMilesEarned } from '@/types/savegame';
 import {
   evaluateNewAchievements,
   legCrossesEquator,
@@ -168,6 +168,7 @@ export const useSavegameStore = create<SavegameStore>()(
         stats.longestFlightKm = Math.max(stats.longestFlightKm, distanceKm);
         stats.shortestFlightKm = Math.min(stats.shortestFlightKm, distanceKm);
         stats.maxCruiseMinutesInLeg = Math.max(stats.maxCruiseMinutesInLeg, cruiseMinutes);
+        stats.miles += calculateMilesEarned(distanceKm, ambientMinutes);
 
         const nextSave: SaveGame = {
           ...save,

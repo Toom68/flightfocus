@@ -48,7 +48,7 @@ function makeRunwayTexture(): THREE.CanvasTexture {
   const tex = new THREE.CanvasTexture(c);
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(1, 8);
+  tex.repeat.set(2, 8);
   tex.needsUpdate = true;
   return tex;
 }
@@ -145,7 +145,9 @@ export function StylizedGround({ altitude, speed, phase, horizonColor, groundCol
     scrollRef.current += scrollSpeed * delta;
 
     if (runwayMatRef.current && runwayMatRef.current.map) {
-      runwayMatRef.current.map.offset.y = scrollRef.current;
+      // Negative offset: runway markings scroll right-to-left (backward) as
+      // seen from a side window seat looking forward.
+      runwayMatRef.current.map.offset.y = -scrollRef.current;
       runwayMatRef.current.map.needsUpdate = true;
     }
 
@@ -182,11 +184,11 @@ export function StylizedGround({ altitude, speed, phase, horizonColor, groundCol
         </mesh>
       </group>
 
-      {/* Runway strip — visible at low altitude */}
+      {/* Runway strip — visible at low altitude, oriented side-to-side, shifted left */}
       {runwayOpacity > 0.01 && (
-        <group position={[0, -groundDepth + 0.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <group position={[-groundDepth * 1.2, -groundDepth + 0.05, -groundDepth * 1.5]} rotation={[-Math.PI / 2, Math.PI / 2, 0]}>
           <mesh>
-            <planeGeometry args={[6, groundDepth * 10, 1, 1]} />
+            <planeGeometry args={[20, groundDepth * 12, 1, 1]} />
             <meshBasicMaterial
               ref={runwayMatRef}
               map={runwayTex}

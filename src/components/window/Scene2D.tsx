@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { getSolarPosition } from '@/utils/time';
+import type { WeatherCondition } from '@/types/weather';
+import { cloudDensity as getCloudDensity, isRaining, isOvercast as isOvercastCondition } from '@/types/weather';
 
 type SolarData = ReturnType<typeof getSolarPosition> | null;
 
@@ -9,6 +11,7 @@ interface Scene2DProps {
   speed: number;
   progress: number;
   solarData: SolarData;
+  weatherCondition?: WeatherCondition;
 }
 
 // 5-stop sky colour keyframes indexed by sun altitude (degrees).
@@ -92,13 +95,16 @@ interface Star {
   phase: number;
 }
 
-export function Scene2D({ solarData }: Scene2DProps) {
+export function Scene2D({ solarData, weatherCondition }: Scene2DProps) {
+  const weatherCond = weatherCondition ?? 'clear';
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
   const starsRef = useRef<Star[]>([]);
   const timeRef = useRef(0);
   const solarRef = useRef(solarData);
+  const weatherRef = useRef(weatherCond);
   solarRef.current = solarData;
+  weatherRef.current = weatherCond;
 
   // Init stars once.
   useEffect(() => {
@@ -144,6 +150,10 @@ export function Scene2D({ solarData }: Scene2DProps) {
       const H = rect.height;
 
       const sunAlt = solarRef.current?.altitude ?? -20;
+      const wCond = weatherRef.current;
+      const density = getCloudDensity(wCond);
+      const overcast = isOvercastCondition(wCond);
+      const raining = isRaining(wCond);
 
       // --- Sky gradient (5 stops) ---
       const stops = getSkyStops(sunAlt);
@@ -156,9 +166,17 @@ export function Scene2D({ solarData }: Scene2DProps) {
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, W, H);
 
-      // --- Subtle sun glow at golden hour ---
+      // --- Weather darkening overlay ---
+      if (overcast || raining) {
+        const darkenAlpha = overcast ? 0.25 * density : 0.15;
+        ctx.fillStyle = `rgba(40, 50, 65, ${darkenAlpha})`;
+        ctx.fillRect(0, 0, W, H);
+      }
+
+      // --- Subtle sun glow at golden hour (attenuated by clouds) ---
       if (sunAlt > -8 && sunAlt < 20) {
         const glowStrength = Math.max(0, 1 - Math.abs(sunAlt) / 10);
+        const weatherAttenuation = 1 - density * 0.6;
         if (glowStrength > 0.01) {
           const sunY = H * (0.55 + (sunAlt / 90) * 0.3);
           const sunX = W * (0.25 + ((solarRef.current?.azimuth ?? 180) / 360) * 0.5);
@@ -166,23 +184,53 @@ export function Scene2D({ solarData }: Scene2DProps) {
           const glow = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, glowR);
           const isWarm = sunAlt < 10;
           const glowColor = isWarm ? '255,160,80' : '255,230,180';
-          glow.addColorStop(0, `rgba(${glowColor},${0.25 * glowStrength})`);
-          glow.addColorStop(0.3, `rgba(${glowColor},${0.08 * glowStrength})`);
+          glow.addColorStop(0, `rgba(${glowColor},${0.25 * glowStrength * weatherAttenuation})`);
+          glow.addColorStop(0.3, `rgba(${glowColor},${0.08 * glowStrength * weatherAttenuation})`);
           glow.addColorStop(1, `rgba(${glowColor},0)`);
           ctx.fillStyle = glow;
           ctx.fillRect(0, 0, W, H);
         }
       }
 
-      // --- Stars at night ---
+      // --- Stars at night (hidden by cloud cover) ---
       if (sunAlt < -2) {
-        const starOpacity = Math.min(1, (-sunAlt - 2) / 10);
-        for (const star of starsRef.current) {
-          const tw = 0.3 + 0.7 * Math.abs(Math.sin(t * star.tw + star.phase));
-          ctx.fillStyle = `rgba(255,255,255,${tw * starOpacity * 0.8})`;
-          ctx.beginPath();
-          ctx.arc(star.x * W, star.y * H, star.r, 0, Math.PI * 2);
-          ctx.fill();
+        const starOpacity = Math.min(1, (-sunAlt - 2) / 10) * (1 - density * 0.8);
+        if (starOpacity > 0.01) {
+          for (const star of starsRef.current) {
+            const tw = 0.3 + 0.7 * Math.abs(Math.sin(t * star.tw + star.phase));
+            ctx.fillStyle = `rgba(255,255,255,${tw * starOpacity * 0.8})`;
+            ctx.beginPath();
+            ctx.arc(star.x * W, star.y * H, star.r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+
+      // --- Procedural cloud layer ---
+      if (density > 0.1) {
+        const cloudAlpha = density * (sunAlt > -6 ? 0.6 : 0.3);
+        const cloudColor = sunAlt > 10
+          ? `rgba(240, 245, 255, ${cloudAlpha})`
+          : sunAlt > -4
+          ? `rgba(200, 180, 160, ${cloudAlpha})`
+          : `rgba(60, 70, 90, ${cloudAlpha * 0.5})`;
+
+        const numBands = overcast ? 5 : 3;
+        for (let b = 0; b < numBands; b++) {
+          const yBase = H * (0.15 + b * 0.18);
+          const drift = (t * (5 + b * 3)) % (W * 2);
+          for (let i = 0; i < 6; i++) {
+            const cx = ((i * W * 0.25 + drift) % (W * 1.4)) - W * 0.2;
+            const cy = yBase + Math.sin(t * 0.3 + i * 1.7 + b) * 8;
+            const cr = W * (0.12 + Math.sin(i * 2.3 + b) * 0.04);
+            const cgrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, cr);
+            cgrad.addColorStop(0, cloudColor);
+            cgrad.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = cgrad;
+            ctx.beginPath();
+            ctx.arc(cx, cy, cr, 0, Math.PI * 2);
+            ctx.fill();
+          }
         }
       }
 

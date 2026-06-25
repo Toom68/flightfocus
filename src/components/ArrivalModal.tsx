@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { PlaneLanding, Loader2, Trophy, ArrowRight, BookOpen, type LucideIcon } from 'lucide-react';
+import { PlaneLanding, Loader2, Trophy, ArrowRight, BookOpen, Award, type LucideIcon } from 'lucide-react';
 import * as Icons from 'lucide-react';
 import { useFlightStore } from '@/store/flightStore';
 import { useSavegameStore } from '@/store/savegameStore';
@@ -87,6 +87,13 @@ export function ArrivalModal() {
             {route && <span>{formatDistance(route.distance)}</span>}
             <span>{ambientMin >= 1 ? formatDuration(sessionRealSeconds) : '<1m'} in the air</span>
           </div>
+          {activeSave && activeSave.stats.miles > 0 && (
+            <div className="flex items-center justify-center gap-1.5 mt-2 text-xs">
+              <Award className="w-3.5 h-3.5 text-cabin-gold" />
+              <span className="text-cabin-gold font-mono">{activeSave.stats.miles.toLocaleString()}</span>
+              <span className="text-gray-500">total miles</span>
+            </div>
+          )}
         </div>
 
         <div className="px-5 pb-5 overflow-y-auto space-y-4">
