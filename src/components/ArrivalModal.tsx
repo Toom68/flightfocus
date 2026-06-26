@@ -82,7 +82,7 @@ export function ArrivalModal() {
           <p className="text-xs uppercase tracking-wider text-gray-400">You've landed in</p>
           <h2 className="text-2xl font-bold text-white">{arrival.city}</h2>
           <p className="text-sm text-gray-400">{arrival.name}</p>
-          <div className="flex items-center justify-center gap-4 mt-3 text-xs text-gray-500">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mt-3 text-xs text-gray-500">
             <span>{departure?.iata} → {arrival.iata}</span>
             {route && <span>{formatDistance(route.distance)}</span>}
             <span>{ambientMin >= 1 ? formatDuration(sessionRealSeconds) : '<1m'} in the air</span>

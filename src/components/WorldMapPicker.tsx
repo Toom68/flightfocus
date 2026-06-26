@@ -203,7 +203,7 @@ export function WorldMapPicker({ from, onSelect, onClose }: WorldMapPickerProps)
                   <span className="font-mono font-bold text-cabin-accent">{selected.iata}</span>
                   <span className="text-gray-400 truncate">— {selected.city}, {selected.country}</span>
                 </div>
-                <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs text-gray-500">
                   <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{formatDistance(distance)}</span>
                   <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{formatDuration(duration)}</span>
                   <span>Bearing {Math.round(bearing)}°</span>

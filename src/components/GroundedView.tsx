@@ -73,8 +73,8 @@ export function GroundedView() {
               animate={{ opacity: 1, y: 0 }}
               className="bg-cabin-panel/80 backdrop-blur-xl border border-white/[0.06] rounded-2xl p-5 shadow-panel"
             >
-              <div className="flex items-start gap-4">
-                <div className="shrink-0 w-32 h-24 rounded-xl bg-cabin-dark/60 border border-white/[0.04] flex items-center justify-center text-cabin-accent/80 shadow-soft">
+              <div className="flex flex-col sm:flex-row items-start gap-4">
+                <div className="shrink-0 w-full sm:w-32 h-24 rounded-xl bg-cabin-dark/60 border border-white/[0.04] flex items-center justify-center text-cabin-accent/80 shadow-soft">
                   <CitySketch sketchKey={getSketchKey(here.iata)} className="w-28 h-20" />
                 </div>
                 <div className="min-w-0 flex-1">

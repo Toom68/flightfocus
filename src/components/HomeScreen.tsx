@@ -116,7 +116,7 @@ export function HomeScreen() {
                       Currently in {save.currentAirport.city}
                       <span className="font-mono text-gray-500"> ({save.currentAirport.iata})</span>
                     </p>
-                    <div className="flex items-center gap-3 mt-1 text-[10px] text-gray-500">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1 text-[10px] text-gray-500">
                       <span className="flex items-center gap-1"><Plane className="w-3 h-3" />{save.stats.totalFlights}</span>
                       <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{uniqueAirportCount(save)}</span>
                       <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{formatHours(save.stats.totalAmbientMinutes)}</span>
@@ -138,7 +138,7 @@ export function HomeScreen() {
                   </button>
                   <button
                     onClick={() => deleteSave(save.id)}
-                    className="w-9 h-9 rounded-lg bg-gray-800/60 text-gray-500 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                    className="w-9 h-9 rounded-lg bg-gray-800/60 text-gray-500 flex items-center justify-center opacity-60 lg:opacity-0 lg:group-hover:opacity-100 hover:text-red-400 hover:bg-red-500/10 transition-all"
                     title="Delete journey"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -161,7 +161,7 @@ export function HomeScreen() {
           )}
         </div>
 
-        <div className="flex items-center justify-center gap-4 mt-6">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mt-6">
           <p className="text-center text-xs text-gray-600">
             Where you land is where you take off next.
           </p>

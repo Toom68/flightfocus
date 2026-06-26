@@ -175,7 +175,7 @@ export function AudioMixer() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       onClick={handleInteraction}
-      className="flex-1 min-h-0 flex flex-col bg-cabin-panel/80 backdrop-blur-xl border border-white/[0.06] rounded-xl p-4 shadow-panel overflow-y-auto"
+      className="lg:flex-1 lg:min-h-0 max-h-[70vh] lg:max-h-none flex flex-col bg-cabin-panel/80 backdrop-blur-xl border border-white/[0.06] rounded-xl p-4 shadow-panel overflow-y-auto"
     >
       <div className="flex items-center justify-between mb-3">
         <button onClick={() => setCollapsed((c) => !c)} className="flex items-center gap-2 group">
@@ -286,7 +286,7 @@ function ChannelRow({ channel, masterVolume, onToggleMute, onVolume }: ChannelRo
         {channel.isMuted ? <VolumeX className="w-3 h-3" /> : <Volume2 className="w-3 h-3" />}
       </button>
 
-      <div className="w-28 shrink-0 min-w-0">
+      <div className="w-20 sm:w-28 shrink-0 min-w-0">
         <div className="flex items-center gap-1">
           <span className="text-xs text-gray-300 truncate">{channel.name}</span>
           {channel.hasLfo && <span className="text-[10px] text-cabin-accent/70" title="Modulated">~</span>}

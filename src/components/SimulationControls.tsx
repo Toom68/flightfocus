@@ -48,7 +48,7 @@ export function SimulationControls() {
         )}
       </div>
 
-      <div className="grid grid-cols-6 gap-1">
+      <div className="grid grid-cols-3 sm:grid-cols-6 gap-1">
         {speeds.map((speed) => (
           <button
             key={speed}

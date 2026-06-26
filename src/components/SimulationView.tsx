@@ -50,13 +50,13 @@ export function SimulationView() {
   }, [isActive, isPaused, tick]);
 
   return (
-    <div className="h-screen flex flex-col lg:flex-row overflow-hidden">
-      <div className="flex-1 flex flex-col p-3 gap-3 min-w-0">
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-3 min-h-0">
-          <div className="min-h-[200px] lg:min-h-0">
+    <div className="min-h-[100dvh] lg:h-screen flex flex-col lg:flex-row lg:overflow-hidden">
+      <div className="flex flex-col p-3 gap-3 min-w-0 lg:flex-1 lg:min-h-0 lg:overflow-hidden">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:flex-1 lg:min-h-0">
+          <div className="h-[30vh] sm:h-[42vh] lg:h-auto lg:min-h-0">
             <WindowView />
           </div>
-          <div className="min-h-[200px] lg:min-h-0">
+          <div className="h-[30vh] sm:h-[42vh] lg:h-auto lg:min-h-0">
             <FlightMap />
           </div>
         </div>
@@ -75,7 +75,7 @@ export function SimulationView() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="w-full lg:w-80 p-3 flex flex-col gap-3 border-t lg:border-t-0 lg:border-l border-white/[0.04] overflow-hidden"
+          className="w-full lg:w-80 p-3 flex flex-col gap-3 border-t lg:border-t-0 lg:border-l border-white/[0.04] lg:overflow-hidden"
         >
           <SimulationControls />
 
@@ -99,15 +99,15 @@ export function SimulationView() {
             })}
           </div>
 
-          {/* Active panel — fills remaining sidebar height */}
-          <div className="flex-1 min-h-0 flex flex-col">
+          {/* Active panel — fills remaining sidebar height on desktop, natural height on mobile */}
+          <div className="lg:flex-1 lg:min-h-0 flex flex-col">
             {activeTab === 'focus' && <FocusTimer />}
             {activeTab === 'journal' && <JournalPanel />}
             {/* Audio + Music stay mounted but hidden to keep audio playing */}
-            <div className={`flex-1 min-h-0 flex flex-col ${activeTab === 'audio' ? '' : 'hidden'}`}>
+            <div className={`lg:flex-1 lg:min-h-0 flex flex-col ${activeTab === 'audio' ? '' : 'hidden'}`}>
               <AudioMixer />
             </div>
-            <div className={`flex-1 min-h-0 flex flex-col ${activeTab === 'music' ? '' : 'hidden'}`}>
+            <div className={`lg:flex-1 lg:min-h-0 flex flex-col ${activeTab === 'music' ? '' : 'hidden'}`}>
               <MusicPlayer />
             </div>
           </div>

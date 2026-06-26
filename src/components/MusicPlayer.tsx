@@ -161,7 +161,7 @@ export function MusicPlayer() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex-1 min-h-0 flex flex-col bg-cabin-panel/80 backdrop-blur-xl border border-white/[0.06] rounded-xl p-4 shadow-panel"
+      className="lg:flex-1 lg:min-h-0 max-h-[70vh] lg:max-h-none flex flex-col bg-cabin-panel/80 backdrop-blur-xl border border-white/[0.06] rounded-xl p-4 shadow-panel"
     >
       <audio
         ref={audioRef}
@@ -179,7 +179,7 @@ export function MusicPlayer() {
           <Music2 className="w-4 h-4 text-cabin-accent" />
           <span className="text-sm font-medium text-white">Focus Music</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {isSpotifyConfigured() && (
             <button
               onClick={() => spotifyConnected ? spotifyDisconnect() : spotifyConnect()}

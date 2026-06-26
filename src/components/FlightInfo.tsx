@@ -63,7 +63,7 @@ export function FlightInfo() {
         />
       </div>
 
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {stats.map((stat) => (
           <div key={stat.label} className="text-center">
             <stat.icon className="w-3.5 h-3.5 text-gray-500 mx-auto mb-1" />
@@ -88,7 +88,7 @@ export function FlightInfo() {
       )}
 
       {departure && arrival && (
-        <div className="mt-2 pt-2 border-t border-white/[0.04] flex items-center justify-between text-xs">
+        <div className="mt-2 pt-2 border-t border-white/[0.04] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 sm:gap-0 text-xs">
           <span className="text-gray-500">
             <span className="text-gray-400 font-mono">{departure.iata}</span>{' '}
             {formatTimeInTimezone(simulationDate, departure.timezone)}
