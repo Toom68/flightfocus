@@ -1,52 +1,19 @@
-import { useMemo, useEffect, useCallback } from 'react';
-import { Plane, Sun, Moon, MapPin, CloudRain } from 'lucide-react';
+import { useMemo } from 'react';
+import { Plane, Sun, Moon, MapPin } from 'lucide-react';
 import { useFlightStore } from '@/store/flightStore';
-import { useWeatherStore } from '@/store/weatherStore';
 import { getSolarPosition, formatTimeInTimezone } from '@/utils/time';
 import { MapboxView } from './window/MapboxView';
-import { RainOverlay } from './window/RainOverlay';
-import { isRaining, type WeatherCondition } from '@/types/weather';
 import { getBiome } from '@/utils/biome';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN ?? '';
 
-const WEATHER_CYCLE: WeatherCondition[] = ['clear', 'partly_cloudy', 'cloudy', 'overcast', 'drizzle', 'rain', 'heavy_rain', 'thunderstorm', 'fog'];
-
 export function WindowView() {
   const { position, phase, simulationDate, departure, arrival } = useFlightStore();
-  const weatherCondition = useWeatherStore((s) => s.condition);
-  const fetchWeather = useWeatherStore((s) => s.fetchWeather);
-  const setCondition = useWeatherStore((s) => s.setCondition);
 
   const solarData = useMemo(() => {
     if (position.lat === 0 && position.lng === 0) return null;
     return getSolarPosition(position.lat, position.lng, simulationDate);
   }, [position.lat, position.lng, simulationDate]);
-
-  // Fetch weather when position changes significantly (every ~5 deg).
-  const weatherKey = `${Math.round(position.lat / 5)}_${Math.round(position.lng / 5)}`;
-  useEffect(() => {
-    if (position.lat !== 0 || position.lng !== 0) {
-      fetchWeather(position.lat, position.lng);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [weatherKey]);
-
-  // Debug: press 'W' to cycle weather conditions for testing rain overlay.
-  const cycleWeather = useCallback((e: KeyboardEvent) => {
-    if (e.key.toLowerCase() === 'w' && !e.ctrlKey && !e.metaKey) {
-      const cur = useWeatherStore.getState().condition;
-      const idx = WEATHER_CYCLE.indexOf(cur);
-      const next = WEATHER_CYCLE[(idx + 1) % WEATHER_CYCLE.length];
-      setCondition(next);
-      console.log('[Weather] Set to:', next);
-    }
-  }, [setCondition]);
-
-  useEffect(() => {
-    window.addEventListener('keydown', cycleWeather);
-    return () => window.removeEventListener('keydown', cycleWeather);
-  }, [cycleWeather]);
 
   const isDay = solarData?.isDaytime ?? false;
   const depTime = departure ? formatTimeInTimezone(simulationDate, departure.timezone) : '--:--';
@@ -65,7 +32,6 @@ export function WindowView() {
           speed={position.speed}
           heading={position.heading}
           phase={phase}
-          weatherCondition={weatherCondition}
           mapboxToken={MAPBOX_TOKEN}
           solarData={solarData}
         />
@@ -80,9 +46,6 @@ export function WindowView() {
           </div>
         </div>
       )}
-
-      {/* Rain overlay on the window */}
-      <RainOverlay />
 
       {/* Cabin window frame — SVG mask creates the window opening */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none">
@@ -133,12 +96,6 @@ export function WindowView() {
             </div>
           );
         })()}
-        {isRaining(weatherCondition) && (
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-sm border border-white/[0.06]">
-            <CloudRain className="w-3 h-3 text-blue-300/80" />
-            <span className="text-[10px] font-medium text-white/70 tracking-wide uppercase">{weatherCondition.replace('_', ' ')}</span>
-          </div>
-        )}
       </div>
 
       {/* Bottom-left: time + altitude */}

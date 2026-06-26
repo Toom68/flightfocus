@@ -1,8 +1,6 @@
 import { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import type { WeatherCondition } from '@/types/weather';
-import { cloudDensity as getCloudDensity, isOvercast as isOvercastCondition } from '@/types/weather';
 
 type SolarData = { altitude: number; azimuth: number } | null;
 
@@ -13,7 +11,6 @@ interface MapboxViewProps {
   speed: number;
   heading: number;
   phase: string;
-  weatherCondition?: WeatherCondition;
   mapboxToken: string;
   solarData?: SolarData;
 }
@@ -95,7 +92,6 @@ export function MapboxView({
   speed,
   heading,
   phase,
-  weatherCondition,
   mapboxToken,
   solarData,
 }: MapboxViewProps) {
@@ -136,6 +132,18 @@ export function MapboxView({
     map.on('style.load', () => {
       styleLoadedRef.current = true;
 
+      // Remove all vector overlay layers (labels, roads, boundaries) for pure satellite view
+      try {
+        const layers = map.getStyle().layers;
+        for (const layer of layers) {
+          if (layer.type === 'symbol' || layer.type === 'line' || (layer.type === 'fill-extrusion' && layer.id !== '3d-buildings') || (layer.type === 'fill' && layer.source !== 'composite')) {
+            map.removeLayer(layer.id);
+          }
+        }
+      } catch {
+        // ignore
+      }
+
       // Add 3D terrain elevation
       try {
         map.addSource('mapbox-dem', {
@@ -169,10 +177,11 @@ export function MapboxView({
               'interpolate',
               ['linear'],
               ['get', 'height'],
-              0, '#d4d4d4',
-              50, '#b0b0b0',
-              100, '#8a8a8a',
-              200, '#6a6a6a',
+              0, '#c4b8a0',      // low buildings: warm concrete
+              20, '#a8a090',      // light tan
+              50, '#8a8278',      // mid: grey-brown
+              100, '#6e6862',     // tall: dark concrete
+              200, '#4a4640',     // skyscrapers: dark glass
             ],
             'fill-extrusion-height': [
               'interpolate',
@@ -192,7 +201,8 @@ export function MapboxView({
               15.5,
               ['get', 'min_height'],
             ],
-            'fill-extrusion-opacity': 0.85,
+            'fill-extrusion-opacity': 0.9,
+            'fill-extrusion-vertical-gradient': true,
           },
         } as mapboxgl.AnyLayer;
         map.addLayer(buildingLayer);
@@ -349,26 +359,17 @@ export function MapboxView({
     if (!map || !styleLoadedRef.current) return;
 
     const sunAlt = solarData?.altitude ?? 0;
-    const cond = weatherCondition ?? 'clear';
-    const density = getCloudDensity(cond);
-    const overcast = isOvercastCondition(cond);
 
     const sky = getSkyColors(sunAlt);
 
-    // Blend sky colors with weather darkening
-    const weatherDim = density * 0.4;
-    const skyColor = overcast ? lerpHex(sky.sky, '#9098a8', weatherDim) : sky.sky;
-    const fogColor = overcast ? lerpHex(sky.fog, '#9098a8', weatherDim) : sky.fog;
-    const fogHigh = overcast ? lerpHex(sky.fogHigh, '#707888', weatherDim) : sky.fogHigh;
-
     try {
       map.setFog({
-        color: fogColor,
-        'high-color': fogHigh,
-        'horizon-blend': 0.3 + density * 0.2,
+        color: sky.fog,
+        'high-color': sky.fogHigh,
+        'horizon-blend': 0.3,
         'space-color': sky.space,
-        'star-intensity': sky.stars * (1 - density * 0.8),
-        range: [2, 10 - density * 3],
+        'star-intensity': sky.stars,
+        range: [2, 10],
       });
     } catch {
       // ignore
@@ -376,13 +377,13 @@ export function MapboxView({
 
     // Update sky layer colors for day/night
     try {
-      map.setPaintProperty('sky', 'sky-color' as any, skyColor);
+      map.setPaintProperty('sky', 'sky-color' as any, sky.sky);
       map.setPaintProperty('sky', 'sky-gradient' as any, [
         'interpolate',
         ['linear'],
         ['sky-radial-progress'],
         0.8,
-        skyColor,
+        sky.sky,
         1,
         sky.horizon,
       ]);
@@ -414,7 +415,7 @@ export function MapboxView({
     } catch {
       // ignore
     }
-  }, [solarData, weatherCondition]);
+  }, [solarData]);
 
   return (
     <div
