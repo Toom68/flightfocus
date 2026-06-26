@@ -24,12 +24,16 @@ export const GROUND_WORLD_SECONDS = 1800; // 30 min
  * completion, 1 = arrival). Ground phases are NOT in this table — they're driven
  * by the real-time ground clock in the flight store.
  */
+// Based on a realistic 150-minute flight profile:
+// Takeoff 0-5min (0-3.3%), Enroute Climb 5-30min (3.3-20%),
+// Cruise 30-120min (20-80%), Descent 120-145min (80-96.7%),
+// Approach & Landing 145-150min (96.7-100%)
 export const PHASE_CONFIGS: PhaseConfig[] = [
-  { phase: 'CLIMB', durationFraction: 0.15, altitudeStart: 0, altitudeEnd: 36000, speedKnots: 350, progressStart: 0.00, progressEnd: 0.15 },
-  { phase: 'CRUISE', durationFraction: 0.70, altitudeStart: 36000, altitudeEnd: 36000, speedKnots: 480, progressStart: 0.15, progressEnd: 0.85 },
-  { phase: 'DESCENT', durationFraction: 0.10, altitudeStart: 36000, altitudeEnd: 10000, speedKnots: 300, progressStart: 0.85, progressEnd: 0.95 },
-  { phase: 'APPROACH', durationFraction: 0.04, altitudeStart: 10000, altitudeEnd: 2000, speedKnots: 180, progressStart: 0.95, progressEnd: 0.99 },
-  { phase: 'LANDING', durationFraction: 0.01, altitudeStart: 2000, altitudeEnd: 0, speedKnots: 140, progressStart: 0.99, progressEnd: 1.0 },
+  { phase: 'CLIMB', durationFraction: 0.20, altitudeStart: 0, altitudeEnd: 36000, speedKnots: 300, progressStart: 0.00, progressEnd: 0.20 },
+  { phase: 'CRUISE', durationFraction: 0.60, altitudeStart: 36000, altitudeEnd: 36000, speedKnots: 300, progressStart: 0.20, progressEnd: 0.80 },
+  { phase: 'DESCENT', durationFraction: 0.167, altitudeStart: 36000, altitudeEnd: 10000, speedKnots: 250, progressStart: 0.80, progressEnd: 0.967 },
+  { phase: 'APPROACH', durationFraction: 0.022, altitudeStart: 10000, altitudeEnd: 2000, speedKnots: 180, progressStart: 0.967, progressEnd: 0.989 },
+  { phase: 'LANDING', durationFraction: 0.011, altitudeStart: 2000, altitudeEnd: 0, speedKnots: 140, progressStart: 0.989, progressEnd: 1.0 },
 ];
 
 /** Resolve the current ground phase from elapsed real seconds, or null once airborne. */

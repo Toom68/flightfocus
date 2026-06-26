@@ -133,32 +133,53 @@ export function estimateFlightDuration(distanceKm: number): number {
 }
 
 // Altitude keyed off AIRBORNE progress (0 = start of climb, 1 = arrival).
+// Based on a realistic 150-minute flight profile:
+// Takeoff 0-5min (0-3.3%): rapid climb from 0 to ~10,000ft
+// Enroute Climb 5-30min (3.3-20%): steady climb 10,000 -> 36,000ft
+// Cruise 30-120min (20-80%): flat at 36,000ft
+// Descent 120-145min (80-96.7%): controlled descent 36,000 -> 10,000ft
+// Approach 145-148min (96.7-98.9%): 10,000 -> 2,000ft
+// Landing 148-150min (98.9-100%): 2,000 -> 0ft
 export function getAltitudeForProgress(progress: number): number {
   const cruiseAltitudeFt = 36000;
 
   if (progress <= 0) return 0;
-  // CLIMB: 0 -> 0.15, ground to cruise altitude
-  if (progress < 0.04) return (progress / 0.04) * 10000;
-  if (progress < 0.15) return 10000 + ((progress - 0.04) / 0.11) * 26000;
-  // CRUISE: 0.15 -> 0.85
-  if (progress < 0.85) return cruiseAltitudeFt;
-  // DESCENT: 0.85 -> 0.95, cruise -> 10000
-  if (progress < 0.95) return cruiseAltitudeFt - ((progress - 0.85) / 0.10) * 26000;
-  // APPROACH/LANDING: 0.95 -> 1.0, 10000 -> 0
-  if (progress < 1) return 10000 * (1 - (progress - 0.95) / 0.05);
+  // TAKEOFF: 0 -> 0.033, rapid climb 0 -> 10,000ft (steep)
+  if (progress < 0.033) return (progress / 0.033) * 10000;
+  // ENROUTE CLIMB: 0.033 -> 0.20, steady climb 10,000 -> 36,000ft
+  if (progress < 0.20) return 10000 + ((progress - 0.033) / 0.167) * 26000;
+  // CRUISE: 0.20 -> 0.80, flat at 36,000ft
+  if (progress < 0.80) return cruiseAltitudeFt;
+  // DESCENT: 0.80 -> 0.967, controlled descent 36,000 -> 10,000ft
+  if (progress < 0.967) return cruiseAltitudeFt - ((progress - 0.80) / 0.167) * 26000;
+  // APPROACH: 0.967 -> 0.989, 10,000 -> 2,000ft
+  if (progress < 0.989) return 10000 - ((progress - 0.967) / 0.022) * 8000;
+  // LANDING: 0.989 -> 1.0, 2,000 -> 0ft
+  if (progress < 1) return 2000 * (1 - (progress - 0.989) / 0.011);
   return 0;
 }
 
 // Speed (knots) keyed off AIRBORNE progress.
+// Based on a realistic 150-minute flight profile:
+// Takeoff: 0 -> 250 kts (rapid acceleration on runway, hold 250 below 10k)
+// Enroute Climb: 250 -> 300 kts (step up after clearing lower airspace)
+// Cruise: 300 kts indicated airspeed (flat)
+// Descent: 300 -> 250 kts (step down to 250 below 10k)
+// Approach: 250 -> 140 kts (gradual decel for landing)
+// Landing: 140 -> 0 kts (braking to stop)
 export function getSpeedForProgress(progress: number): number {
   if (progress <= 0) return 160;
-  // CLIMB accelerate to cruise speed
-  if (progress < 0.15) return 250 + (progress / 0.15) * 230;
-  // CRUISE
-  if (progress < 0.85) return 480;
-  // DESCENT
-  if (progress < 0.95) return 480 - ((progress - 0.85) / 0.10) * 230;
-  // APPROACH/LANDING decel to touchdown
-  if (progress < 1) return 250 - ((progress - 0.95) / 0.05) * 110;
-  return 140;
+  // TAKEOFF: 0 -> 0.033, accelerate 160 -> 250 kts
+  if (progress < 0.033) return 160 + (progress / 0.033) * 90;
+  // ENROUTE CLIMB: 0.033 -> 0.20, 250 -> 300 kts
+  if (progress < 0.20) return 250 + ((progress - 0.033) / 0.167) * 50;
+  // CRUISE: 0.20 -> 0.80, 300 kts indicated
+  if (progress < 0.80) return 300;
+  // DESCENT: 0.80 -> 0.967, 300 -> 250 kts (braking with thicker air below 10k)
+  if (progress < 0.967) return 300 - ((progress - 0.80) / 0.167) * 50;
+  // APPROACH: 0.967 -> 0.989, 250 -> 140 kts
+  if (progress < 0.989) return 250 - ((progress - 0.967) / 0.022) * 110;
+  // LANDING: 0.989 -> 1.0, 140 -> 0 kts (braking to stop)
+  if (progress < 1) return 140 * (1 - (progress - 0.989) / 0.011);
+  return 0;
 }

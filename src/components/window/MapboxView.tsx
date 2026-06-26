@@ -104,10 +104,11 @@ export function MapboxView({
   const styleLoadedRef = useRef(false);
   const rafRef = useRef<number>(0);
   const smoothBearingRef = useRef(heading - 90);
+  const preloadRef = useRef<{ lastPreload: number; preloaded: boolean }>({ lastPreload: 0, preloaded: false });
 
   // Target values updated every render — rAF loop reads these
-  const targetRef = useRef({ lat, lng, altitude, heading });
-  targetRef.current = { lat, lng, altitude, heading };
+  const targetRef = useRef({ lat, lng, altitude, heading, phase });
+  targetRef.current = { lat, lng, altitude, heading, phase };
 
   // Initialize map once
   useEffect(() => {
@@ -248,9 +249,51 @@ export function MapboxView({
       }
     });
 
+    // Tile preloading: during ground phases, sweep camera around airport to cache tiles
+    // within ~10km radius. Runs every 5 seconds during BOARDING/TAXI/TAKEOFF.
+    const preloadTiles = () => {
+      const now = Date.now();
+      if (now - preloadRef.current.lastPreload < 5000) return;
+      preloadRef.current.lastPreload = now;
+
+      const t = targetRef.current;
+      const groundPhases = ['BOARDING', 'TAXI', 'TAKEOFF'];
+      if (!groundPhases.includes(t.phase)) return;
+
+      // Save current camera to restore after preload sweep
+      const savedCam = map.getFreeCameraOptions();
+      const airportLng = t.lng;
+      const airportLat = t.lat;
+
+      // Sweep 8 directions around the airport at ~5km offset to cache tiles
+      const directions = 8;
+      for (let i = 0; i < directions; i++) {
+        const angle = (i / directions) * Math.PI * 2;
+        const offsetLat = (5 / 111) * Math.cos(angle);
+        const offsetLng = (5 / (111 * Math.cos(airportLat * Math.PI / 180))) * Math.sin(angle);
+        const pos = mapboxgl.MercatorCoordinate.fromLngLat(
+          [airportLng + offsetLng, airportLat + offsetLat],
+          50
+        );
+        const lookAt = mapboxgl.MercatorCoordinate.fromLngLat(
+          [airportLng + offsetLng, airportLat + offsetLat],
+          0
+        );
+        const cam = new mapboxgl.FreeCameraOptions(pos, lookAt);
+        map.setFreeCameraOptions(cam);
+      }
+
+      // Restore saved camera
+      map.setFreeCameraOptions(savedCam);
+      console.log('[MapboxView] Preloaded tiles around airport');
+    };
+
     // rAF camera tracking loop — physically positions camera at plane's real altitude
     const tick = () => {
       const tgt = targetRef.current;
+
+      // Preload tiles during ground phases
+      preloadTiles();
 
       // Plane altitude in meters above ground
       const altMeters = Math.max(1, tgt.altitude * 0.3048);
