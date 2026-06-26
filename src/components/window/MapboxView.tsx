@@ -327,8 +327,9 @@ export function MapboxView({
       smoothBearingRef.current += bDelta * 0.1;
       const bearingRad = (smoothBearingRef.current * Math.PI) / 180;
 
-      // Distance to look-at point on ground: h / tan(pitch from horizontal)
-      const lookDist = Math.max(1, altMeters / Math.tan(pitchRad));
+      // Distance to look-at point on ground: h * tan(pitch from vertical)
+      // pitch 0° = straight down (lookDist ≈ 0), pitch 85° = near horizon (lookDist very large)
+      const lookDist = Math.max(1, altMeters * Math.tan(pitchRad));
 
       // Compute look-at point: forward in bearing direction at ground level
       const latOffset = (lookDist * Math.cos(bearingRad)) / 111320;

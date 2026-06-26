@@ -63,32 +63,32 @@ export function AirportSearch({ label, value, onChange, placeholder = 'Search ai
 
   return (
     <div ref={containerRef} className="relative">
-      <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
+      <label className="block text-xs font-medium text-theme-secondary uppercase tracking-wider mb-2">
         {label}
       </label>
 
       {value ? (
         <div
-          className="flex items-center gap-3 p-3 bg-cabin-dim/50 border border-white/[0.06] rounded-lg cursor-pointer hover:border-cabin-accent/50 transition-all duration-200"
+          className="flex items-center gap-3 p-3 bg-theme-dim border border-theme-border rounded-lg cursor-pointer hover:border-theme-accent-border transition-all duration-200"
           onClick={() => {
             onChange(null as unknown as Airport);
             setTimeout(() => inputRef.current?.focus(), 100);
           }}
         >
-          <div className="w-10 h-10 rounded-lg bg-cabin-accent/20 flex items-center justify-center">
-            <Plane className="w-5 h-5 text-cabin-accent" />
+          <div className="w-10 h-10 rounded-lg bg-theme-accent-soft flex items-center justify-center">
+            <Plane className="w-5 h-5 text-theme-accent" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <span className="text-lg font-semibold text-white">{value.iata}</span>
-              <span className="text-xs text-gray-500">{value.icao}</span>
+              <span className="text-lg font-semibold text-theme-primary">{value.iata}</span>
+              <span className="text-xs text-theme-muted">{value.icao}</span>
             </div>
-            <p className="text-sm text-gray-400 truncate">{value.city}, {value.country}</p>
+            <p className="text-sm text-theme-secondary truncate">{value.city}, {value.country}</p>
           </div>
         </div>
       ) : (
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-theme-muted" />
           <input
             ref={inputRef}
             type="text"
@@ -97,7 +97,7 @@ export function AirportSearch({ label, value, onChange, placeholder = 'Search ai
             onKeyDown={handleKeyDown}
             onFocus={() => query.length > 0 && setIsOpen(true)}
             placeholder={placeholder}
-            className="w-full pl-10 pr-4 py-3 bg-cabin-dim/50 border border-white/[0.06] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cabin-accent/50 focus:ring-1 focus:ring-cabin-accent/20 transition-all"
+            className="w-full pl-10 pr-4 py-3 bg-theme-dim border border-theme-border rounded-lg text-theme-primary placeholder-theme-muted focus:outline-none focus:border-theme-accent-border focus:ring-1 focus:ring-theme-accent-soft transition-all"
           />
         </div>
       )}
@@ -109,32 +109,32 @@ export function AirportSearch({ label, value, onChange, placeholder = 'Search ai
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.15 }}
-            className="absolute z-50 w-full mt-2 bg-cabin-panel border border-white/[0.08] rounded-lg shadow-panel overflow-hidden"
+            className="absolute z-50 w-full mt-2 bg-theme-panel-solid border border-theme-border rounded-lg shadow-panel overflow-hidden"
           >
             {results.map((result, index) => (
               <button
                 key={result.airport.iata}
                 className={`w-full flex items-center gap-3 p-3 text-left transition-colors ${
                   index === selectedIndex
-                    ? 'bg-cabin-accent/10 border-l-2 border-cabin-accent'
-                    : 'hover:bg-cabin-dim/50 border-l-2 border-transparent'
+                    ? 'bg-theme-accent-soft border-l-2 border-theme-accent'
+                    : 'hover:bg-theme-dim border-l-2 border-transparent'
                 }`}
                 onClick={() => handleSelect(result.airport)}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
-                <div className="w-8 h-8 rounded bg-gray-800 flex items-center justify-center">
-                  <MapPin className="w-4 h-4 text-gray-400" />
+                <div className="w-8 h-8 rounded bg-theme-dim flex items-center justify-center">
+                  <MapPin className="w-4 h-4 text-theme-muted" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono font-semibold text-white text-sm">{result.airport.iata}</span>
-                    <span className="text-xs text-gray-500">{result.airport.icao}</span>
-                    <span className="text-xs text-gray-600 ml-auto">{result.matchField}</span>
+                    <span className="font-mono font-semibold text-theme-primary text-sm">{result.airport.iata}</span>
+                    <span className="text-xs text-theme-muted">{result.airport.icao}</span>
+                    <span className="text-xs text-theme-muted ml-auto">{result.matchField}</span>
                   </div>
-                  <p className="text-xs text-gray-400 truncate">
+                  <p className="text-xs text-theme-secondary truncate">
                     {result.airport.name}
                   </p>
-                  <p className="text-xs text-gray-500 truncate">
+                  <p className="text-xs text-theme-muted truncate">
                     {result.airport.city}, {result.airport.country}
                   </p>
                 </div>

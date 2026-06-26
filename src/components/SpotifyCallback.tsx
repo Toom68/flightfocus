@@ -31,27 +31,27 @@ export function SpotifyCallback() {
   }, [handleCallback]);
 
   return (
-    <div className="fixed inset-0 bg-cabin-dark flex items-center justify-center">
+    <div className="fixed inset-0 bg-theme-dim flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
         {status === 'loading' && (
           <>
             <Loader2 className="w-8 h-8 text-green-500 animate-spin" />
-            <p className="text-sm text-gray-400">Connecting to Spotify…</p>
+            <p className="text-sm text-theme-secondary">Connecting to Spotify…</p>
           </>
         )}
         {status === 'success' && (
           <>
             <CheckCircle2 className="w-8 h-8 text-green-500" />
-            <p className="text-sm text-gray-300">Connected! Redirecting…</p>
+            <p className="text-sm text-theme-secondary">Connected! Redirecting…</p>
           </>
         )}
         {status === 'error' && (
           <>
-            <AlertCircle className="w-8 h-8 text-red-400" />
-            <p className="text-sm text-red-400">Connection failed.</p>
+            <AlertCircle className="w-8 h-8 text-red-500" />
+            <p className="text-sm text-red-500">Connection failed.</p>
             <button
               onClick={() => { window.location.href = '/'; }}
-              className="text-xs text-gray-500 hover:text-white mt-2"
+              className="text-xs text-theme-muted hover:text-theme-primary mt-2"
             >
               Back to app
             </button>

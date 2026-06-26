@@ -20,9 +20,9 @@ const PRESETS = [
 ];
 
 const BREATHING_PHASES = [
-  { label: 'Inhale', duration: 4, color: 'text-cabin-accent' },
-  { label: 'Hold', duration: 4, color: 'text-cabin-gold' },
-  { label: 'Exhale', duration: 6, color: 'text-blue-300' },
+  { label: 'Inhale', duration: 4, color: 'text-theme-accent' },
+  { label: 'Hold', duration: 4, color: 'text-theme-gold' },
+  { label: 'Exhale', duration: 6, color: 'text-cyan-500' },
 ] as const;
 
 export function FocusTimer() {
@@ -92,33 +92,33 @@ export function FocusTimer() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="lg:flex-1 lg:min-h-0 max-h-[70vh] lg:max-h-none flex flex-col bg-cabin-panel/80 backdrop-blur-xl border border-white/[0.06] rounded-xl p-4 shadow-panel overflow-y-auto"
+      className="lg:flex-1 lg:min-h-0 max-h-[70vh] lg:max-h-none flex flex-col bg-theme-panel backdrop-blur-xl border border-theme-border rounded-xl p-4 shadow-panel overflow-y-auto"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-3 shrink-0">
         <div className="flex items-center gap-2">
           {isBreak ? (
-            <Coffee className="w-4 h-4 text-cabin-gold" />
+            <Coffee className="w-4 h-4 text-theme-gold" />
           ) : (
-            <Timer className="w-4 h-4 text-cabin-accent" />
+            <Timer className="w-4 h-4 text-theme-accent" />
           )}
-          <span className="text-sm font-medium text-white">
+          <span className="text-sm font-medium text-theme-primary">
             {isBreak ? 'Break' : 'Focus'}
           </span>
           {sessionCount > 0 && (
-            <span className="text-xs text-gray-500">#{sessionCount}</span>
+            <span className="text-xs text-theme-muted">#{sessionCount}</span>
           )}
         </div>
         <div className="flex items-center gap-1">
           <button
             onClick={toggleMinimalUI}
-            className="p-1.5 rounded hover:bg-white/5 text-gray-400 transition-colors"
+            className="p-1.5 rounded hover:bg-theme-dim text-theme-muted transition-colors"
           >
             {isMinimalUI ? <Maximize className="w-3.5 h-3.5" /> : <Minimize2 className="w-3.5 h-3.5" />}
           </button>
           <button
             onClick={toggleFullscreen}
-            className="p-1.5 rounded hover:bg-white/5 text-gray-400 transition-colors"
+            className="p-1.5 rounded hover:bg-theme-dim text-theme-muted transition-colors"
           >
             <Maximize className="w-3.5 h-3.5" />
           </button>
@@ -130,14 +130,14 @@ export function FocusTimer() {
         <div className="text-center">
           <motion.span
             key={timeDisplay}
-            className="text-5xl font-mono font-bold text-white tracking-wider drop-shadow-[0_0_12px_rgba(255,255,255,0.15)]"
+            className="text-5xl font-mono font-bold text-theme-primary tracking-wider"
           >
             {timeDisplay}
           </motion.span>
         </div>
-        <div className="mt-3 h-1.5 bg-gray-800 rounded-full overflow-hidden shadow-inner">
+        <div className="mt-3 h-1.5 bg-theme-disabled-bg rounded-full overflow-hidden shadow-inner">
           <motion.div
-            className={`h-full rounded-full ${isBreak ? 'bg-gradient-to-r from-cabin-gold to-amber-300' : 'bg-gradient-to-r from-cabin-accent to-blue-400'}`}
+            className={`h-full rounded-full ${isBreak ? 'bg-gradient-to-r from-orange-400 to-amber-300' : 'bg-gradient-to-r from-sky-400 to-cyan-400'}`}
             style={{ width: `${progress * 100}%` }}
           />
         </div>
@@ -145,20 +145,20 @@ export function FocusTimer() {
 
       {/* Session stats */}
       <div className="grid grid-cols-3 gap-2 mb-4 shrink-0">
-        <div className="bg-cabin-dim/40 border border-white/[0.04] rounded-lg p-2 text-center">
-          <Flame className="w-3 h-3 text-cabin-gold mx-auto mb-0.5" />
-          <p className="text-sm font-mono text-white">{completedSessions}</p>
-          <p className="text-[9px] text-gray-500">Sessions</p>
+        <div className="bg-theme-dim border border-theme-border rounded-lg p-2 text-center">
+          <Flame className="w-3 h-3 text-theme-gold mx-auto mb-0.5" />
+          <p className="text-sm font-mono text-theme-primary">{completedSessions}</p>
+          <p className="text-[9px] text-theme-muted">Sessions</p>
         </div>
-        <div className="bg-cabin-dim/40 border border-white/[0.04] rounded-lg p-2 text-center">
-          <Clock className="w-3 h-3 text-cabin-accent mx-auto mb-0.5" />
-          <p className="text-sm font-mono text-white">{totalFocusMin}</p>
-          <p className="text-[9px] text-gray-500">Minutes</p>
+        <div className="bg-theme-dim border border-theme-border rounded-lg p-2 text-center">
+          <Clock className="w-3 h-3 text-theme-accent mx-auto mb-0.5" />
+          <p className="text-sm font-mono text-theme-primary">{totalFocusMin}</p>
+          <p className="text-[9px] text-theme-muted">Minutes</p>
         </div>
-        <div className="bg-cabin-dim/40 border border-white/[0.04] rounded-lg p-2 text-center">
-          <Target className="w-3 h-3 text-blue-300 mx-auto mb-0.5" />
-          <p className="text-sm font-mono text-white">{tasks.filter((t) => t.done).length}/{tasks.length}</p>
-          <p className="text-[9px] text-gray-500">Tasks</p>
+        <div className="bg-theme-dim border border-theme-border rounded-lg p-2 text-center">
+          <Target className="w-3 h-3 text-cyan-500 mx-auto mb-0.5" />
+          <p className="text-sm font-mono text-theme-primary">{tasks.filter((t) => t.done).length}/{tasks.length}</p>
+          <p className="text-[9px] text-theme-muted">Tasks</p>
         </div>
       </div>
 
@@ -170,7 +170,7 @@ export function FocusTimer() {
               <button
                 key={p.mins}
                 onClick={() => p.mins === 25 ? startPomodoro() : startCustomTimer(p.mins)}
-                className="py-2 px-1 bg-cabin-accent/15 hover:bg-cabin-accent/25 text-cabin-accent text-[10px] font-medium rounded-lg transition-all duration-200 hover:shadow-glow flex flex-col items-center gap-0.5"
+                className="py-2 px-1 bg-theme-accent-medium hover:bg-theme-hover text-theme-accent text-[10px] font-medium rounded-lg transition-all duration-200 hover:shadow-glow flex flex-col items-center gap-0.5"
               >
                 <span className="font-mono font-bold text-xs">{p.mins}</span>
                 <span className="text-[9px] opacity-70">{p.label}</span>
@@ -180,7 +180,7 @@ export function FocusTimer() {
         ) : (
           <button
             onClick={stopTimer}
-            className="w-full py-2.5 bg-red-500/15 hover:bg-red-500/25 text-red-400 text-xs font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-1.5"
+            className="w-full py-2.5 bg-red-500/15 hover:bg-red-500/25 text-red-500 text-xs font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-1.5"
           >
             <Square className="w-3 h-3" />
             End Session
@@ -193,7 +193,7 @@ export function FocusTimer() {
         <button
           onClick={() => { setBreathing(!breathing); setBreathPhase(0); setBreathCount(0); }}
           className={`w-full flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-medium transition-all duration-200 ${
-            breathing ? 'bg-cabin-accent/20 text-cabin-accent' : 'bg-cabin-dim/40 text-gray-400 hover:text-white'
+            breathing ? 'bg-theme-accent-soft text-theme-accent' : 'bg-theme-dim text-theme-secondary hover:text-theme-primary'
           }`}
         >
           <Wind className="w-3.5 h-3.5" />
@@ -213,7 +213,7 @@ export function FocusTimer() {
                     scale: breathPhase === 0 ? [1, 1.4] : breathPhase === 2 ? [1.4, 1] : 1.4,
                     transition: { duration: BREATHING_PHASES[breathPhase].duration, ease: 'easeInOut' },
                   }}
-                  className="w-16 h-16 rounded-full bg-cabin-accent/20 border-2 border-cabin-accent/40 flex items-center justify-center shadow-glow"
+                  className="w-16 h-16 rounded-full bg-theme-accent-soft border-2 border-theme-accent-border flex items-center justify-center shadow-glow"
                 >
                   <span className={`text-xs font-medium ${BREATHING_PHASES[breathPhase].color}`}>
                     {BREATHING_PHASES[breathPhase].label}
@@ -228,8 +228,8 @@ export function FocusTimer() {
       {/* Task list */}
       <div className="flex-1 min-h-0 flex flex-col">
         <div className="flex items-center gap-2 mb-2 shrink-0">
-          <Target className="w-3.5 h-3.5 text-gray-400" />
-          <span className="text-xs font-medium text-gray-300">Tasks</span>
+          <Target className="w-3.5 h-3.5 text-theme-muted" />
+          <span className="text-xs font-medium text-theme-secondary">Tasks</span>
         </div>
         <div className="flex gap-1.5 mb-2 shrink-0">
           <input
@@ -238,11 +238,11 @@ export function FocusTimer() {
             onChange={(e) => setTaskInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && addTask()}
             placeholder="Add a focus task…"
-            className="flex-1 px-2.5 py-1.5 bg-cabin-dim/50 border border-white/[0.06] rounded-lg text-xs text-white placeholder-gray-600 focus:outline-none focus:border-cabin-accent/40 transition-all"
+            className="flex-1 px-2.5 py-1.5 bg-theme-dim border border-theme-border rounded-lg text-xs text-theme-primary placeholder-theme-muted focus:outline-none focus:border-theme-accent-border transition-all"
           />
           <button
             onClick={addTask}
-            className="w-7 h-7 rounded-lg bg-cabin-accent/20 hover:bg-cabin-accent/30 text-cabin-accent flex items-center justify-center transition-all duration-200 shrink-0"
+            className="w-7 h-7 rounded-lg bg-theme-accent-soft hover:bg-theme-accent-soft text-theme-accent flex items-center justify-center transition-all duration-200 shrink-0"
           >
             <Plus className="w-3.5 h-3.5" />
           </button>
@@ -253,29 +253,29 @@ export function FocusTimer() {
               key={task.id}
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-2 group p-2 rounded-lg bg-cabin-dim/30 border border-white/[0.03] hover:border-white/[0.06] transition-all duration-200"
+              className="flex items-center gap-2 group p-2 rounded-lg bg-theme-dim border border-theme-border hover:border-theme-border-solid transition-all duration-200"
             >
               <button
                 onClick={() => toggleTask(task.id)}
                 className={`w-4 h-4 rounded flex items-center justify-center shrink-0 transition-all ${
-                  task.done ? 'bg-cabin-accent text-white' : 'border border-gray-600 hover:border-cabin-accent'
+                  task.done ? 'bg-theme-accent text-white' : 'border border-theme-border-solid hover:border-theme-accent-border'
                 }`}
               >
                 {task.done && <Check className="w-3 h-3" />}
               </button>
-              <span className={`flex-1 text-xs ${task.done ? 'text-gray-600 line-through' : 'text-gray-300'}`}>
+              <span className={`flex-1 text-xs ${task.done ? 'text-theme-muted line-through' : 'text-theme-primary'}`}>
                 {task.text}
               </span>
               <button
                 onClick={() => removeTask(task.id)}
-                className="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-400 transition-all shrink-0"
+                className="opacity-0 group-hover:opacity-100 text-theme-muted hover:text-red-500 transition-all shrink-0"
               >
                 <X className="w-3 h-3" />
               </button>
             </motion.div>
           ))}
           {tasks.length === 0 && (
-            <p className="text-[11px] text-gray-600 text-center py-4">No tasks yet. Add one above.</p>
+            <p className="text-[11px] text-theme-muted text-center py-4">No tasks yet. Add one above.</p>
           )}
         </div>
       </div>

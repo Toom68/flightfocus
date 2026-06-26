@@ -75,12 +75,12 @@ export function SimulationView() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="w-full lg:w-80 p-3 flex flex-col gap-3 border-t lg:border-t-0 lg:border-l border-white/[0.04] lg:overflow-hidden"
+          className="w-full lg:w-80 p-3 flex flex-col gap-3 border-t lg:border-t-0 lg:border-l border-theme-border lg:overflow-hidden"
         >
           <SimulationControls />
 
           {/* Tab bar */}
-          <div className="flex gap-1 bg-cabin-dim/40 rounded-lg p-1 shrink-0">
+          <div className="flex gap-1 bg-theme-dim rounded-lg p-1 shrink-0">
             {TABS.map((t) => {
               const Icon = t.icon;
               const active = activeTab === t.id;
@@ -89,7 +89,7 @@ export function SimulationView() {
                   key={t.id}
                   onClick={() => setActiveTab(t.id)}
                   className={`flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-md text-[10px] font-medium transition-all duration-200 ${
-                    active ? 'bg-cabin-accent/20 text-cabin-accent' : 'text-gray-400 hover:text-white'
+                    active ? 'bg-theme-accent-medium text-theme-accent' : 'text-theme-secondary hover:text-theme-primary'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />

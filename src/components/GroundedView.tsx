@@ -27,7 +27,7 @@ export function GroundedView() {
     // No active save — bounce back home.
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <button onClick={() => setViewMode('home')} className="text-cabin-accent text-sm">Return to menu</button>
+        <button onClick={() => setViewMode('home')} className="text-theme-accent text-sm">Return to menu</button>
       </div>
     );
   }
@@ -57,11 +57,11 @@ export function GroundedView() {
       <div className="max-w-5xl mx-auto">
         {/* Top bar */}
         <div className="flex items-center justify-between mb-5">
-          <button onClick={handleExit} className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors">
+          <button onClick={handleExit} className="flex items-center gap-1.5 text-sm text-theme-secondary hover:text-theme-primary transition-colors">
             <ChevronLeft className="w-4 h-4" />
             Journeys
           </button>
-          <span className="text-sm text-gray-500 truncate max-w-[60%]">{save.name}</span>
+          <span className="text-sm text-theme-secondary truncate max-w-[60%]">{save.name}</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -71,24 +71,24 @@ export function GroundedView() {
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-cabin-panel/80 backdrop-blur-xl border border-white/[0.06] rounded-2xl p-5 shadow-panel"
+              className="bg-theme-panel backdrop-blur-xl border border-theme-border rounded-2xl p-5 shadow-panel"
             >
               <div className="flex flex-col sm:flex-row items-start gap-4">
-                <div className="shrink-0 w-full sm:w-32 h-24 rounded-xl bg-cabin-dark/60 border border-white/[0.04] flex items-center justify-center text-cabin-accent/80 shadow-soft">
+                <div className="shrink-0 w-full sm:w-32 h-24 rounded-xl bg-theme-dim border border-theme-border flex items-center justify-center text-theme-accent/80 shadow-soft">
                   <CitySketch sketchKey={getSketchKey(here.iata)} className="w-28 h-20" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs uppercase tracking-wider text-gray-500">You are in</p>
-                  <h1 className="text-2xl font-bold text-white truncate">{here.city}</h1>
-                  <p className="text-sm text-gray-400 truncate">{here.name}</p>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs uppercase tracking-wider text-theme-secondary">You are in</p>
+                  <h1 className="text-2xl font-bold text-theme-primary truncate">{here.city}</h1>
+                  <p className="text-sm text-theme-secondary truncate">{here.name}</p>
+                  <p className="text-xs text-theme-muted mt-1">
                     <span className="font-mono">{here.iata}</span> · {getContinent(here)} · {here.country}
                   </p>
                   {save.stats.miles > 0 && (
-                    <p className="text-xs mt-1.5 flex items-center gap-1.5 text-cabin-gold/80">
+                    <p className="text-xs mt-1.5 flex items-center gap-1.5 text-theme-gold/80">
                       <Award className="w-3.5 h-3.5" />
-                      <span className="font-mono text-cabin-gold">{save.stats.miles.toLocaleString()}</span>
-                      <span className="text-gray-500">frequent flyer miles</span>
+                      <span className="font-mono text-theme-gold">{save.stats.miles.toLocaleString()}</span>
+                      <span className="text-theme-secondary">frequent flyer miles</span>
                     </p>
                   )}
                 </div>
@@ -96,7 +96,7 @@ export function GroundedView() {
 
               <button
                 onClick={() => setPickerOpen(true)}
-                className="w-full mt-4 py-3.5 bg-gradient-to-r from-cabin-accent to-blue-500 hover:shadow-glow text-white font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
+                className="w-full mt-4 py-3.5 bg-gradient-to-r from-sky-400 to-sky-500 hover:shadow-glow text-white font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
               >
                 <Navigation className="w-4 h-4" />
                 Choose your next destination
@@ -104,14 +104,14 @@ export function GroundedView() {
             </motion.div>
 
             {/* Tabs */}
-            <div className="bg-cabin-panel/80 backdrop-blur-xl border border-white/[0.06] rounded-2xl p-4 shadow-panel">
-              <div className="flex gap-1 mb-4 bg-cabin-dim/40 rounded-lg p-1">
+            <div className="bg-theme-panel backdrop-blur-xl border border-theme-border rounded-2xl p-4 shadow-panel">
+              <div className="flex gap-1 mb-4 bg-theme-dim rounded-lg p-1">
                 {tabs.map((t) => (
                   <button
                     key={t.id}
                     onClick={() => setTab(t.id)}
                     className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-xs font-medium transition-colors ${
-                      tab === t.id ? 'bg-cabin-accent text-white' : 'text-gray-400 hover:text-white'
+                      tab === t.id ? 'bg-theme-accent-soft0 text-theme-primary' : 'text-theme-secondary hover:text-theme-primary'
                     }`}
                   >
                     <t.icon className="w-3.5 h-3.5" />
@@ -143,7 +143,7 @@ export function GroundedView() {
           {/* Right: ambient audio */}
           <div className="space-y-4">
             <AudioMixer />
-            <p className="text-[11px] text-gray-600 px-1">
+            <p className="text-[11px] text-theme-muted px-1">
               The terminal hums quietly around you. Set your soundscape, then choose where the day takes you.
             </p>
           </div>

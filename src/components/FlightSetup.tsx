@@ -27,15 +27,15 @@ export function FlightSetup() {
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: 'spring' }}
-            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-cabin-accent/10 border border-cabin-accent/20 mb-4 shadow-glow"
+            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-theme-accent-soft border border-theme-accent-border mb-4 shadow-glow"
           >
-            <Plane className="w-8 h-8 text-cabin-accent" />
+            <Plane className="w-8 h-8 text-theme-accent" />
           </motion.div>
-          <h1 className="text-3xl font-display font-bold text-white mb-2">flyandwork</h1>
-          <p className="text-gray-400 text-sm">Select your route. Begin your focus flight.</p>
+          <h1 className="text-3xl font-display font-bold text-theme-primary mb-2">flyandwork</h1>
+          <p className="text-theme-secondary text-sm">Select your route. Begin your focus flight.</p>
         </div>
 
-        <div className="bg-cabin-panel/80 backdrop-blur-xl border border-white/[0.06] rounded-2xl p-6 space-y-6 shadow-panel">
+        <div className="bg-theme-panel backdrop-blur-xl border border-theme-border rounded-2xl p-6 space-y-6 shadow-panel">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <AirportSearch
               label="Departure"
@@ -55,40 +55,40 @@ export function FlightSetup() {
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
-              className="border-t border-white/[0.04] pt-4"
+              className="border-t border-theme-border pt-4"
             >
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono font-bold text-white">{departure.iata}</span>
-                  <ArrowRight className="w-4 h-4 text-gray-500" />
-                  <span className="font-mono font-bold text-white">{arrival.iata}</span>
+                  <span className="font-mono font-bold text-theme-primary">{departure.iata}</span>
+                  <ArrowRight className="w-4 h-4 text-theme-muted" />
+                  <span className="font-mono font-bold text-theme-primary">{arrival.iata}</span>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4 mt-4">
-                <div className="flex items-center gap-2 text-gray-400">
+                <div className="flex items-center gap-2 text-theme-secondary">
                   <MapPin className="w-4 h-4" />
                   <span className="text-sm">{formatDistance(distance)}</span>
                 </div>
-                <div className="flex items-center gap-2 text-gray-400">
+                <div className="flex items-center gap-2 text-theme-secondary">
                   <Clock className="w-4 h-4" />
                   <span className="text-sm">{formatDuration(duration)}</span>
                 </div>
               </div>
 
-              <div className="mt-4 p-3 bg-cabin-dim/50 rounded-lg">
-                <div className="flex items-center justify-between text-xs text-gray-500">
+              <div className="mt-4 p-3 bg-theme-dim rounded-lg border border-theme-border">
+                <div className="flex items-center justify-between text-xs text-theme-muted">
                   <span>Bearing: {Math.round(initialBearing(departure.lat, departure.lng, arrival.lat, arrival.lng))}°</span>
                   <span>Route: Great Circle</span>
                 </div>
               </div>
 
-              <div className="mt-4 p-4 bg-cabin-dim/50 rounded-lg space-y-3">
-                <div className="flex items-center gap-2 text-sm text-gray-300">
+              <div className="mt-4 p-4 bg-theme-dim rounded-lg border border-theme-border space-y-3">
+                <div className="flex items-center gap-2 text-sm text-theme-secondary">
                   {customHour >= 6 && customHour < 18 ? (
-                    <Sun className="w-4 h-4 text-yellow-400" />
+                    <Sun className="w-4 h-4 text-amber-500" />
                   ) : (
-                    <Moon className="w-4 h-4 text-blue-300" />
+                    <Moon className="w-4 h-4 text-theme-muted" />
                   )}
                   <span className="font-medium">Departure Time</span>
                 </div>
@@ -98,8 +98,8 @@ export function FlightSetup() {
                     onClick={() => setTimeMode('realtime')}
                     className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-all duration-200 ${
                       timeMode === 'realtime'
-                        ? 'bg-cabin-accent/20 text-cabin-accent border border-cabin-accent/30'
-                        : 'bg-cabin-dim/50 text-gray-500 border border-white/[0.06] hover:text-gray-400'
+                        ? 'bg-theme-accent-soft text-theme-accent border border-theme-accent-border'
+                        : 'bg-theme-dim text-theme-muted border border-theme-border hover:text-theme-secondary'
                     }`}
                   >
                     Real Time
@@ -108,8 +108,8 @@ export function FlightSetup() {
                     onClick={() => setTimeMode('custom')}
                     className={`flex-1 py-2 px-3 rounded-lg text-xs font-mono transition-all duration-200 ${
                       timeMode === 'custom'
-                        ? 'bg-cabin-accent/20 text-cabin-accent border border-cabin-accent/30'
-                        : 'bg-cabin-dim/50 text-gray-500 border border-white/[0.06] hover:text-gray-400'
+                        ? 'bg-theme-accent-soft text-theme-accent border border-theme-accent-border'
+                        : 'bg-theme-dim text-theme-muted border border-theme-border hover:text-theme-secondary'
                     }`}
                   >
                     Custom Time
@@ -117,16 +117,16 @@ export function FlightSetup() {
                 </div>
 
                 {timeMode === 'realtime' ? (
-                  <p className="text-[11px] text-gray-500">
+                  <p className="text-[11px] text-theme-muted">
                     Uses your device clock. Sky will match real local time at departure and adjust as you fly across time zones.
                   </p>
                 ) : (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs text-theme-secondary">
                         Local time at {departure.iata}
                       </span>
-                      <span className="text-sm font-mono text-white">
+                      <span className="text-sm font-mono text-theme-primary">
                         {String(customHour).padStart(2, '0')}:00
                       </span>
                     </div>
@@ -136,9 +136,9 @@ export function FlightSetup() {
                       max={23}
                       value={customHour}
                       onChange={(e) => setCustomHour(Number(e.target.value))}
-                      className="w-full h-1.5 rounded-full appearance-none bg-gray-700 accent-cabin-accent cursor-pointer"
+                      className="w-full h-1.5 rounded-full appearance-none bg-theme-disabled-bg accent-theme-accent cursor-pointer"
                     />
-                    <div className="flex justify-between text-[10px] text-gray-600 font-mono">
+                    <div className="flex justify-between text-[10px] text-theme-muted font-mono">
                       <span>00:00</span>
                       <span>06:00</span>
                       <span>12:00</span>
@@ -156,14 +156,14 @@ export function FlightSetup() {
             whileTap={{ scale: 0.99 }}
             disabled={!departure || !arrival}
             onClick={startFlight}
-            className="w-full py-4 bg-gradient-to-r from-cabin-accent to-blue-500 hover:shadow-glow disabled:from-gray-800 disabled:to-gray-800 disabled:text-gray-600 disabled:shadow-none text-white font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
+            className="w-full py-4 bg-gradient-to-r from-sky-400 to-sky-500 hover:shadow-glow disabled:from-theme-disabled-bg disabled:to-theme-disabled-bg disabled:text-theme-muted disabled:shadow-none text-theme-primary font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
           >
             <Plane className="w-5 h-5" />
             Begin Flight
           </motion.button>
         </div>
 
-        <p className="text-center text-xs text-gray-600 mt-6">
+        <p className="text-center text-xs text-theme-muted mt-6">
           Simulation uses real great-circle routes and aviation calculations
         </p>
       </motion.div>

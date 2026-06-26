@@ -26,7 +26,7 @@ export function LogbookView({ save }: LogbookViewProps) {
       </div>
 
       <div className="relative pl-4">
-        <div className="absolute left-[7px] top-2 bottom-2 w-px bg-gray-800" />
+        <div className="absolute left-[7px] top-2 bottom-2 w-px bg-theme-disabled-bg" />
         {stops.map((stop, i) => {
           const isCurrent = i === 0;
           const isOrigin = stop.iata === save.originIata && stop.departedFrom === save.originIata && i === stops.length - 1;
@@ -41,24 +41,24 @@ export function LogbookView({ save }: LogbookViewProps) {
               <span
                 className={`absolute -left-[1px] top-1.5 w-3 h-3 rounded-full border-2 ${
                   isCurrent
-                    ? 'bg-cabin-gold border-cabin-gold'
-                    : 'bg-cabin-dark border-gray-600'
+                    ? 'bg-theme-gold border-theme-gold'
+                    : 'bg-theme-panel-solid border-theme-border-solid'
                 }`}
               />
               <div className="flex items-center justify-between">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-sm font-semibold text-white">{stop.iata}</span>
-                    <span className="text-sm text-gray-300 truncate">{stop.airport.city}</span>
-                    {isCurrent && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-cabin-gold/20 text-cabin-gold">You are here</span>}
-                    {isOrigin && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-cabin-accent/20 text-cabin-accent">Start</span>}
+                    <span className="font-mono text-sm font-semibold text-theme-primary">{stop.iata}</span>
+                    <span className="text-sm text-theme-secondary truncate">{stop.airport.city}</span>
+                    {isCurrent && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-theme-gold-soft text-theme-gold">You are here</span>}
+                    {isOrigin && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-theme-accent-soft text-theme-accent">Start</span>}
                   </div>
-                  <p className="text-[10px] text-gray-500">
+                  <p className="text-[10px] text-theme-muted">
                     {getContinent(stop.airport)} · {stop.airport.country}
                     {stop.distanceKm > 0 && <> · {formatDistance(stop.distanceKm)} from {stop.departedFrom}</>}
                   </p>
                 </div>
-                <span className="text-[10px] text-gray-600 shrink-0">{formatDate(stop.arrivedAt)}</span>
+                <span className="text-[10px] text-theme-muted shrink-0">{formatDate(stop.arrivedAt)}</span>
               </div>
             </motion.div>
           );
@@ -70,10 +70,10 @@ export function LogbookView({ save }: LogbookViewProps) {
 
 function Stat({ icon: Icon, label, value }: { icon: typeof MapPin; label: string; value: string }) {
   return (
-    <div className="bg-cabin-dim/40 border border-white/[0.04] rounded-lg p-2.5 text-center shadow-soft">
-      <Icon className="w-3.5 h-3.5 text-gray-500 mx-auto mb-1" />
-      <p className="text-sm font-mono text-white">{value}</p>
-      <p className="text-[10px] text-gray-600">{label}</p>
+    <div className="bg-theme-dim border border-theme-border rounded-lg p-2.5 text-center shadow-soft">
+      <Icon className="w-3.5 h-3.5 text-theme-muted mx-auto mb-1" />
+      <p className="text-sm font-mono text-theme-primary">{value}</p>
+      <p className="text-[10px] text-theme-muted">{label}</p>
     </div>
   );
 }

@@ -35,15 +35,15 @@ export function AchievementsPanel({ unlocked }: AchievementsPanelProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Trophy className="w-4 h-4 text-cabin-gold" />
-          <span className="text-sm font-medium text-white">Achievements</span>
+          <Trophy className="w-4 h-4 text-theme-gold" />
+          <span className="text-sm font-medium text-theme-primary">Achievements</span>
         </div>
-        <span className="text-xs font-mono text-gray-500">{unlockedSet.size}/{total}</span>
+        <span className="text-xs font-mono text-theme-muted">{unlockedSet.size}/{total}</span>
       </div>
 
       {(Object.keys(grouped) as AchievementCategory[]).map((cat) => (
         <div key={cat}>
-          <p className="text-[10px] uppercase tracking-wider text-gray-600 mb-2">{CATEGORY_LABEL[cat]}</p>
+          <p className="text-[10px] uppercase tracking-wider text-theme-muted mb-2">{CATEGORY_LABEL[cat]}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {grouped[cat].map((a) => {
               const isUnlocked = unlockedSet.has(a.id);
@@ -55,22 +55,22 @@ export function AchievementsPanel({ unlocked }: AchievementsPanelProps) {
                   initial={false}
                   className={`flex items-center gap-3 p-2.5 rounded-lg border transition-colors ${
                     isUnlocked
-                      ? 'bg-cabin-gold/10 border-cabin-gold/30'
-                      : 'bg-cabin-dim/30 border-white/[0.04]'
+                      ? 'bg-theme-gold-soft border-theme-gold-border'
+                      : 'bg-theme-dim border-theme-border'
                   }`}
                 >
                   <div
                     className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
-                      isUnlocked ? 'bg-cabin-gold/20 text-cabin-gold' : 'bg-gray-800 text-gray-600'
+                      isUnlocked ? 'bg-theme-gold-soft text-theme-gold' : 'bg-theme-disabled-bg text-theme-muted'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
                   </div>
                   <div className="min-w-0">
-                    <p className={`text-xs font-medium truncate ${isUnlocked ? 'text-white' : 'text-gray-400'}`}>
+                    <p className={`text-xs font-medium truncate ${isUnlocked ? 'text-theme-primary' : 'text-theme-muted'}`}>
                       {isSecret ? 'Hidden achievement' : a.name}
                     </p>
-                    <p className="text-[10px] text-gray-500 truncate">
+                    <p className="text-[10px] text-theme-muted truncate">
                       {isSecret ? 'Keep travelling to discover this.' : a.description}
                     </p>
                   </div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
@@ -8,8 +8,26 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <script>
+      // Prevent FOUC — apply dark class before React loads
+      (function() {
+        try {
+          var stored = localStorage.getItem('theme-preference');
+          var mode = 'dark';
+          if (stored) {
+            var parsed = JSON.parse(stored);
+            if (parsed && parsed.state && (parsed.state.mode === 'light' || parsed.state.mode === 'dark')) {
+              mode = parsed.state.mode;
+            }
+          }
+          if (mode === 'dark') document.documentElement.classList.add('dark');
+        } catch (e) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
   </head>
-  <body class="bg-cabin-dark text-white antialiased">
+  <body class="bg-cabin-dark text-cabin-accent antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

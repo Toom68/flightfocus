@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Plane, Sun, Moon, MapPin } from 'lucide-react';
 import { useFlightStore } from '@/store/flightStore';
+import { useThemeStore } from '@/store/themeStore';
 import { getSolarPosition, formatTimeInTimezone } from '@/utils/time';
 import { MapboxView } from './window/MapboxView';
 import { getBiome } from '@/utils/biome';
@@ -9,6 +10,7 @@ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN ?? '';
 
 export function WindowView() {
   const { position, phase, simulationDate, departure, arrival } = useFlightStore();
+  const { mode } = useThemeStore();
 
   const solarData = useMemo(() => {
     if (position.lat === 0 && position.lng === 0) return null;
@@ -22,7 +24,7 @@ export function WindowView() {
   const flightLevel = `FL${Math.round(position.altitude / 100).toString().padStart(3, '0')}`;
 
   return (
-    <div className="relative w-full h-full rounded-2xl overflow-hidden bg-cabin-dark border border-white/[0.04] select-none">
+    <div className="relative w-full h-full rounded-2xl overflow-hidden bg-theme-dim border border-theme-border select-none">
       {/* Mapbox tilted map view fills the window */}
       {MAPBOX_TOKEN ? (
         <MapboxView
@@ -38,9 +40,9 @@ export function WindowView() {
       ) : (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center px-6 max-w-xs">
-            <p className="text-xs text-white/40 leading-relaxed">
-              Add a Mapbox token to <code className="text-white/60 bg-white/10 px-1 rounded">.env.local</code> as<br />
-              <code className="text-white/60 bg-white/10 px-1 rounded">VITE_MAPBOX_TOKEN=pk....</code><br />
+            <p className="text-xs text-theme-muted leading-relaxed">
+              Add a Mapbox token to <code className="text-theme-secondary bg-theme-disabled-bg px-1 rounded">.env.local</code> as<br />
+              <code className="text-theme-secondary bg-theme-disabled-bg px-1 rounded">VITE_MAPBOX_TOKEN=pk....</code><br />
               Get a free token at mapbox.com
             </p>
           </div>
@@ -55,14 +57,14 @@ export function WindowView() {
             <ellipse cx="50%" cy="50%" rx="28%" ry="42%" fill="black" />
           </mask>
           <radialGradient id="wallGrad" cx="50%" cy="50%" r="75%">
-            <stop offset="0%" stopColor="#101724" />
-            <stop offset="60%" stopColor="#0a0e1a" />
-            <stop offset="100%" stopColor="#06090f" />
+            <stop offset="0%" stopColor={mode === 'dark' ? '#1e293b' : '#faf6ee'} />
+            <stop offset="60%" stopColor={mode === 'dark' ? '#0f172a' : '#e8e0d0'} />
+            <stop offset="100%" stopColor={mode === 'dark' ? '#020617' : '#c4b89e'} />
           </radialGradient>
           <radialGradient id="bezelGrad" cx="50%" cy="30%" r="80%">
-            <stop offset="0%" stopColor="#2a3548" />
-            <stop offset="50%" stopColor="#1a2030" />
-            <stop offset="100%" stopColor="#0d121c" />
+            <stop offset="0%" stopColor={mode === 'dark' ? '#475569' : '#b8ad94'} />
+            <stop offset="50%" stopColor={mode === 'dark' ? '#334155' : '#968b76'} />
+            <stop offset="100%" stopColor={mode === 'dark' ? '#1e293b' : '#6b6150'} />
           </radialGradient>
         </defs>
 
@@ -72,18 +74,18 @@ export function WindowView() {
         {/* Outer bezel — thick frame ring */}
         <ellipse cx="50%" cy="50%" rx="28%" ry="42%" fill="none" stroke="url(#bezelGrad)" strokeWidth="8" />
         {/* Mid bezel — subtle highlight on top edge */}
-        <ellipse cx="50%" cy="50%" rx="28%" ry="42%" fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="2" />
+        <ellipse cx="50%" cy="50%" rx="28%" ry="42%" fill="none" stroke={mode === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.5)'} strokeWidth="2" />
         {/* Inner edge — dark shadow for depth */}
-        <ellipse cx="50%" cy="50%" rx="27%" ry="41%" fill="none" stroke="rgba(0,0,0,0.5)" strokeWidth="3" />
+        <ellipse cx="50%" cy="50%" rx="27%" ry="41%" fill="none" stroke={mode === 'dark' ? 'rgba(0,0,0,0.4)' : 'rgba(61,53,40,0.15)'} strokeWidth="3" />
         {/* Inner rim — faint light catch */}
-        <ellipse cx="50%" cy="50%" rx="26.5%" ry="40.5%" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
+        <ellipse cx="50%" cy="50%" rx="26.5%" ry="40.5%" fill="none" stroke={mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.3)'} strokeWidth="1" />
       </svg>
 
       {/* Top-right: phase + biome + weather indicator */}
       <div className="absolute top-3 right-3 pointer-events-none z-10 flex flex-col items-end gap-1.5">
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-sm border border-white/[0.06]">
-          <Plane className="w-3 h-3 text-cabin-accent" />
-          <span className="text-[10px] font-medium text-white/70 tracking-wide uppercase">{phase}</span>
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-theme-panel backdrop-blur-sm border border-theme-border">
+          <Plane className="w-3 h-3 text-theme-accent" />
+          <span className="text-[10px] font-medium text-theme-secondary tracking-wide uppercase">{phase}</span>
         </div>
         {MAPBOX_TOKEN && (() => {
           const biome = getBiome(position.lat, position.lng, [
@@ -91,8 +93,8 @@ export function WindowView() {
             { lat: arrival?.lat ?? 0, lng: arrival?.lng ?? 0 },
           ]);
           return (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-sm border border-white/[0.06]">
-              <span className="text-[10px] font-medium text-white/50 tracking-wide uppercase">{biome.label}</span>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-theme-panel backdrop-blur-sm border border-theme-border">
+              <span className="text-[10px] font-medium text-theme-secondary tracking-wide uppercase">{biome.label}</span>
             </div>
           );
         })()}
@@ -100,31 +102,31 @@ export function WindowView() {
 
       {/* Bottom-left: time + altitude */}
       <div className="absolute bottom-3 left-3 pointer-events-none z-10">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-sm border border-white/[0.06]">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-theme-panel backdrop-blur-sm border border-theme-border">
           <div className="flex items-center gap-1.5">
             {isDay ? (
-              <Sun className="w-3 h-3 text-amber-300/80" />
+              <Sun className="w-3 h-3 text-amber-500/80" />
             ) : (
-              <Moon className="w-3 h-3 text-blue-200/70" />
+              <Moon className="w-3 h-3 text-theme-muted" />
             )}
-            <span className="text-[11px] font-mono text-white/70">{depTime}</span>
+            <span className="text-[11px] font-mono text-theme-secondary">{depTime}</span>
             {hasMultipleTZ && (
               <>
-                <span className="text-[10px] text-white/30">→</span>
-                <span className="text-[11px] font-mono text-white/50">{arrTime}</span>
+                <span className="text-[10px] text-theme-muted">→</span>
+                <span className="text-[11px] font-mono text-theme-secondary">{arrTime}</span>
               </>
             )}
           </div>
-          <div className="w-px h-3 bg-white/10" />
-          <span className="text-[11px] font-mono text-cabin-accent/80">{flightLevel}</span>
+          <div className="w-px h-3 bg-theme-disabled-bg" />
+          <span className="text-[11px] font-mono text-theme-accent/80">{flightLevel}</span>
         </div>
       </div>
 
       {/* Bottom-right: coordinates */}
       <div className="absolute bottom-3 right-3 pointer-events-none z-10">
-        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/80 backdrop-blur-sm border border-white/[0.06]">
-          <MapPin className="w-3 h-3 text-white/40" />
-          <span className="text-[10px] font-mono text-white/50">
+        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-theme-panel backdrop-blur-sm border border-theme-border">
+          <MapPin className="w-3 h-3 text-theme-muted" />
+          <span className="text-[10px] font-mono text-theme-secondary">
             {position.lat.toFixed(1)}°, {position.lng.toFixed(1)}°
           </span>
         </div>

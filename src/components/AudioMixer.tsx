@@ -8,6 +8,7 @@ import {
   SAMPLE_LOOP_OPTIONS, SAMPLE_FALLBACK_NOISE, ONE_SHOT_SAMPLES,
 } from '@/store/audioStore';
 import { useFlightStore } from '@/store/flightStore';
+import { useThemeStore } from '@/store/themeStore';
 import { audioEngine } from '@/utils/audio';
 import type { AudioChannel, AudioPreset } from '@/types/simulation';
 import type { FlightPhase } from '@/types/flight';
@@ -53,6 +54,7 @@ export function AudioMixer() {
     setMasterVolume, setChannelVolume, toggleChannelMute, setInitialized, setPreset,
   } = useAudioStore();
   const { phase, isActive } = useFlightStore();
+  const { mode } = useThemeStore();
   const [collapsed, setCollapsed] = useState(false);
 
   // Initialize the engine + all channels once.
@@ -175,22 +177,22 @@ export function AudioMixer() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       onClick={handleInteraction}
-      className="lg:flex-1 lg:min-h-0 max-h-[70vh] lg:max-h-none flex flex-col bg-cabin-panel/80 backdrop-blur-xl border border-white/[0.06] rounded-xl p-4 shadow-panel overflow-y-auto"
+      className="lg:flex-1 lg:min-h-0 max-h-[70vh] lg:max-h-none flex flex-col bg-theme-panel backdrop-blur-xl border border-theme-border rounded-xl p-4 shadow-panel overflow-y-auto"
     >
       <div className="flex items-center justify-between mb-3">
         <button onClick={() => setCollapsed((c) => !c)} className="flex items-center gap-2 group">
-          <Wand2 className="w-4 h-4 text-cabin-accent" />
-          <span className="text-sm font-medium text-white">Soundscape</span>
+          <Wand2 className="w-4 h-4 text-theme-accent" />
+          <span className="text-sm font-medium text-theme-primary">Soundscape</span>
           <ChevronDown
-            className={`w-3.5 h-3.5 text-gray-500 transition-transform ${collapsed ? '-rotate-90' : ''}`}
+            className={`w-3.5 h-3.5 text-theme-muted transition-transform ${collapsed ? '-rotate-90' : ''}`}
           />
         </button>
         <div className="flex items-center gap-2">
-          <Volume2 className="w-3.5 h-3.5 text-gray-400" />
+          <Volume2 className="w-3.5 h-3.5 text-theme-muted" />
           <input
             type="range" min="0" max="1" step="0.05" value={masterVolume}
             onChange={(e) => setMasterVolume(parseFloat(e.target.value))}
-            className="w-16 h-1 bg-gray-700 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-cabin-accent"
+            className="w-16 h-1 bg-theme-disabled-bg rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-theme-accent"
           />
         </div>
       </div>
@@ -207,8 +209,8 @@ export function AudioMixer() {
               onClick={() => setPreset(p)}
               className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors border ${
                 active
-                  ? 'bg-cabin-accent/20 text-cabin-accent border-cabin-accent/40'
-                  : 'bg-cabin-dim/40 text-gray-400 border-transparent hover:text-gray-200'
+                  ? 'bg-theme-accent-soft text-theme-accent border-theme-accent-border'
+                  : 'bg-theme-dim text-theme-secondary border-transparent hover:text-theme-primary'
               }`}
             >
               <Icon className="w-3 h-3" />
@@ -227,8 +229,8 @@ export function AudioMixer() {
             className="overflow-hidden"
           >
             {activePreset === 'auto' && (
-              <p className="text-[10px] text-gray-500 mb-2 flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-cabin-accent" />
+              <p className="text-[10px] text-theme-muted mb-2 flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-theme-accent" />
                 Auto mode follows your flight phase. Pick a preset to take manual control.
               </p>
             )}
@@ -239,7 +241,7 @@ export function AudioMixer() {
                 if (groupChannels.length === 0) return null;
                 return (
                   <div key={group.category}>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-600 mb-1.5">{group.label}</p>
+                    <p className="text-[10px] uppercase tracking-wider text-theme-muted mb-1.5">{group.label}</p>
                     <div className="space-y-2">
                       {groupChannels.map((channel) => (
                         <ChannelRow
@@ -248,6 +250,7 @@ export function AudioMixer() {
                           masterVolume={masterVolume}
                           onToggleMute={() => toggleChannelMute(channel.id)}
                           onVolume={(v) => setChannelVolume(channel.id, v)}
+                          mode={mode}
                         />
                       ))}
                     </div>
@@ -269,17 +272,21 @@ interface ChannelRowProps {
   onVolume: (v: number) => void;
 }
 
-function ChannelRow({ channel, masterVolume, onToggleMute, onVolume }: ChannelRowProps) {
+function ChannelRow({ channel, masterVolume, onToggleMute, onVolume, mode }: ChannelRowProps & { mode: string }) {
   const hasOptions = CHANNEL_ENGINE_OPTIONS[channel.id] !== undefined;
   const level = channel.isMuted ? 0 : channel.volume * masterVolume;
   const active = level > 0.01;
+
+  const meterGradient = mode === 'dark'
+    ? 'bg-gradient-to-r from-sky-400/60 to-orange-400/60'
+    : 'bg-gradient-to-r from-amber-700/50 to-red-500/70';
 
   return (
     <div className="flex items-center gap-2">
       <button
         onClick={onToggleMute}
         className={`w-6 h-6 rounded flex items-center justify-center transition-colors shrink-0 ${
-          channel.isMuted ? 'bg-gray-800 text-gray-600' : 'bg-cabin-accent/20 text-cabin-accent'
+          channel.isMuted ? 'bg-theme-disabled-bg text-theme-muted' : 'bg-theme-accent-soft text-theme-accent'
         }`}
         title={hasOptions ? channel.name : undefined}
       >
@@ -288,19 +295,19 @@ function ChannelRow({ channel, masterVolume, onToggleMute, onVolume }: ChannelRo
 
       <div className="w-20 sm:w-28 shrink-0 min-w-0">
         <div className="flex items-center gap-1">
-          <span className="text-xs text-gray-300 truncate">{channel.name}</span>
-          {channel.hasLfo && <span className="text-[10px] text-cabin-accent/70" title="Modulated">~</span>}
+          <span className="text-xs text-theme-primary truncate">{channel.name}</span>
+          {channel.hasLfo && <span className="text-[10px] text-theme-accent/70" title="Modulated">~</span>}
         </div>
         {channel.phaseGated && (
-          <span className="text-[9px] text-gray-600">{channel.phaseGated}</span>
+          <span className="text-[9px] text-theme-muted">{channel.phaseGated}</span>
         )}
       </div>
 
       <div className="flex-1 relative flex items-center">
         {/* level meter behind the slider */}
-        <div className="absolute inset-x-0 h-1 bg-gray-800 rounded-full overflow-hidden">
+        <div className="absolute inset-x-0 h-1 bg-theme-disabled-bg rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-cabin-accent/60 to-cabin-gold/60"
+            className={`h-full ${meterGradient}`}
             animate={{ width: `${Math.min(100, level * 100)}%`, opacity: active ? [0.55, 0.9, 0.55] : 0.3 }}
             transition={{ width: { duration: 0.4 }, opacity: { duration: 2.4, repeat: active ? Infinity : 0 } }}
           />
@@ -308,7 +315,7 @@ function ChannelRow({ channel, masterVolume, onToggleMute, onVolume }: ChannelRo
         <input
           type="range" min="0" max="1" step="0.05" value={channel.volume}
           onChange={(e) => onVolume(parseFloat(e.target.value))}
-          className="relative w-full h-1 bg-transparent appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-2.5 [&::-webkit-slider-thumb]:h-2.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow"
+          className="relative w-full h-1 bg-transparent appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-2.5 [&::-webkit-slider-thumb]:h-2.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-theme-primary [&::-webkit-slider-thumb]:shadow"
         />
       </div>
     </div>

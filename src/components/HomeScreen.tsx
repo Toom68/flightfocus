@@ -77,22 +77,22 @@ export function HomeScreen() {
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: 'spring' }}
-            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-cabin-accent/10 border border-cabin-accent/20 mb-4 shadow-glow"
+            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-theme-accent-soft border border-theme-accent-border mb-4 shadow-glow"
           >
-            <Plane className="w-8 h-8 text-cabin-accent" />
+            <Plane className="w-8 h-8 text-theme-accent" />
           </motion.div>
-          <h1 className="text-3xl font-display font-bold text-white mb-2">flyandwork</h1>
-          <p className="text-gray-400 text-sm">A quiet seat above the world. Pick up where you landed.</p>
+          <h1 className="text-3xl font-display font-bold text-theme-primary mb-2">flyandwork</h1>
+          <p className="text-theme-secondary text-sm">A quiet seat above the world. Pick up where you landed.</p>
         </div>
 
-        <div className="bg-cabin-panel/80 backdrop-blur-xl border border-white/[0.06] rounded-2xl p-6 space-y-4 shadow-panel">
+        <div className="bg-theme-panel backdrop-blur-xl border border-theme-border rounded-2xl p-6 space-y-4 shadow-panel">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-medium text-white">Your journeys</h2>
-            <span className="text-xs text-gray-500 font-mono">{saves.length}/{MAX_SAVES}</span>
+            <h2 className="text-sm font-medium text-theme-primary">Your journeys</h2>
+            <span className="text-xs text-theme-muted font-mono">{saves.length}/{MAX_SAVES}</span>
           </div>
 
           {sortedSaves.length === 0 && (
-            <div className="text-center py-10 text-gray-500 text-sm">
+            <div className="text-center py-10 text-theme-secondary text-sm">
               No journeys yet. Start a new one below.
             </div>
           )}
@@ -104,25 +104,25 @@ export function HomeScreen() {
                 layout
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="group flex items-center gap-3 p-3 bg-cabin-dim/40 border border-white/[0.04] rounded-xl hover:border-cabin-accent/30 hover:shadow-soft transition-all duration-200"
+                className="group flex items-center gap-3 p-3 bg-theme-dim border border-theme-border rounded-xl hover:border-theme-accent-border hover:shadow-soft transition-all duration-200"
               >
                 <button onClick={() => handleContinue(save)} className="flex-1 flex items-center gap-3 text-left min-w-0">
-                  <div className="w-11 h-11 rounded-lg bg-cabin-accent/15 flex items-center justify-center shrink-0 shadow-glow">
-                    <MapPin className="w-5 h-5 text-cabin-accent" />
+                  <div className="w-11 h-11 rounded-lg bg-theme-accent-soft flex items-center justify-center shrink-0 shadow-glow">
+                    <MapPin className="w-5 h-5 text-theme-accent" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-white truncate">{save.name}</p>
-                    <p className="text-xs text-gray-400 truncate">
+                    <p className="text-sm font-semibold text-theme-primary truncate">{save.name}</p>
+                    <p className="text-xs text-theme-secondary truncate">
                       Currently in {save.currentAirport.city}
-                      <span className="font-mono text-gray-500"> ({save.currentAirport.iata})</span>
+                      <span className="font-mono text-theme-muted"> ({save.currentAirport.iata})</span>
                     </p>
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1 text-[10px] text-gray-500">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1 text-[10px] text-theme-muted">
                       <span className="flex items-center gap-1"><Plane className="w-3 h-3" />{save.stats.totalFlights}</span>
                       <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{uniqueAirportCount(save)}</span>
                       <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{formatHours(save.stats.totalAmbientMinutes)}</span>
                       <span className="flex items-center gap-1"><Trophy className="w-3 h-3" />{save.unlockedAchievements.length}</span>
                       {save.stats.miles > 0 && (
-                        <span className="flex items-center gap-1 text-cabin-gold/70"><Award className="w-3 h-3" />{save.stats.miles.toLocaleString()}</span>
+                        <span className="flex items-center gap-1 text-theme-gold/70"><Award className="w-3 h-3" />{save.stats.miles.toLocaleString()}</span>
                       )}
                       <span className="ml-auto">{relativeTime(save.lastPlayedAt)}</span>
                     </div>
@@ -131,14 +131,14 @@ export function HomeScreen() {
                 <div className="flex items-center gap-1 shrink-0">
                   <button
                     onClick={() => handleContinue(save)}
-                    className="w-9 h-9 rounded-lg bg-cabin-accent/20 text-cabin-accent flex items-center justify-center hover:bg-cabin-accent/30 transition-colors"
+                    className="w-9 h-9 rounded-lg bg-theme-accent-soft text-theme-accent flex items-center justify-center hover:bg-theme-accent-soft transition-colors"
                     title="Continue journey"
                   >
                     <ArrowRight className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => deleteSave(save.id)}
-                    className="w-9 h-9 rounded-lg bg-gray-800/60 text-gray-500 flex items-center justify-center opacity-60 lg:opacity-0 lg:group-hover:opacity-100 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                    className="w-9 h-9 rounded-lg bg-theme-dim text-theme-muted flex items-center justify-center opacity-60 lg:opacity-0 lg:group-hover:opacity-100 hover:text-red-400 hover:bg-red-50 transition-all"
                     title="Delete journey"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -151,25 +151,25 @@ export function HomeScreen() {
           <button
             onClick={() => setShowNew(true)}
             disabled={saves.length >= MAX_SAVES}
-            className="w-full py-3.5 bg-gradient-to-r from-cabin-accent to-blue-500 hover:shadow-glow disabled:from-gray-800 disabled:to-gray-800 disabled:text-gray-600 disabled:shadow-none text-white font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
+            className="w-full py-3.5 bg-gradient-to-r from-sky-400 to-sky-500 hover:shadow-glow disabled:from-theme-disabled-bg disabled:to-theme-disabled-bg disabled:text-theme-muted disabled:shadow-none text-theme-primary font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
           >
             <Plus className="w-5 h-5" />
             New Journey
           </button>
           {saves.length >= MAX_SAVES && (
-            <p className="text-center text-[11px] text-gray-600">Delete a journey to start a new one.</p>
+            <p className="text-center text-[11px] text-theme-muted">Delete a journey to start a new one.</p>
           )}
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mt-6">
-          <p className="text-center text-xs text-gray-600">
+          <p className="text-center text-xs text-theme-muted">
             Where you land is where you take off next.
           </p>
           {isSpotifyConfigured() && (
             <button
               onClick={() => spotifyConnected ? spotifyDisconnect() : spotifyConnect()}
               className={`flex items-center gap-1.5 text-[11px] font-medium transition-colors ${
-                spotifyConnected ? 'text-green-500/80 hover:text-green-400' : 'text-gray-600 hover:text-gray-400'
+                spotifyConnected ? 'text-green-600/80 hover:text-green-600' : 'text-theme-muted hover:text-theme-secondary'
               }`}
             >
               <SpotifyIcon className="w-3 h-3" />
@@ -205,23 +205,23 @@ function NewJourneyModal({ onClose, onCreate }: NewJourneyModalProps) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
-      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-theme-overlay backdrop-blur-sm flex items-center justify-center p-4"
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md bg-cabin-panel border border-white/[0.08] rounded-2xl p-6 space-y-5 shadow-panel"
+        className="w-full max-w-md bg-theme-panel-solid border border-theme-border rounded-2xl p-6 space-y-5 shadow-panel"
       >
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-white">Start a new journey</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-white">
+          <h3 className="text-lg font-semibold text-theme-primary">Start a new journey</h3>
+          <button onClick={onClose} className="text-theme-muted hover:text-theme-primary">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <p className="text-sm text-gray-400">
+        <p className="text-sm text-theme-secondary">
           Choose where your story begins. You'll pick destinations as you go — each landing becomes your next departure.
         </p>
 
@@ -233,7 +233,7 @@ function NewJourneyModal({ onClose, onCreate }: NewJourneyModalProps) {
         />
 
         <div>
-          <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
+          <label className="block text-xs font-medium text-theme-secondary uppercase tracking-wider mb-2">
             Journey name
           </label>
           <input
@@ -241,14 +241,14 @@ function NewJourneyModal({ onClose, onCreate }: NewJourneyModalProps) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder={defaultName || 'My grand tour'}
-            className="w-full px-4 py-3 bg-cabin-dim/50 border border-white/[0.06] rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-cabin-accent/50 transition-all"
+            className="w-full px-4 py-3 bg-theme-dim border border-theme-border rounded-lg text-theme-primary placeholder-theme-muted focus:outline-none focus:border-theme-accent-border transition-all"
           />
         </div>
 
         <button
           onClick={() => origin && onCreate(name || defaultName, origin)}
           disabled={!origin}
-          className="w-full py-3.5 bg-gradient-to-r from-cabin-accent to-blue-500 hover:shadow-glow disabled:from-gray-800 disabled:to-gray-800 disabled:text-gray-600 disabled:shadow-none text-white font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
+          className="w-full py-3.5 bg-gradient-to-r from-sky-400 to-sky-500 hover:shadow-glow disabled:from-theme-disabled-bg disabled:to-theme-disabled-bg disabled:text-theme-muted disabled:shadow-none text-theme-primary font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
         >
           <Plane className="w-5 h-5" />
           Begin

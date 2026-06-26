@@ -161,7 +161,7 @@ export function MusicPlayer() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="lg:flex-1 lg:min-h-0 max-h-[70vh] lg:max-h-none flex flex-col bg-cabin-panel/80 backdrop-blur-xl border border-white/[0.06] rounded-xl p-4 shadow-panel"
+      className="lg:flex-1 lg:min-h-0 max-h-[70vh] lg:max-h-none flex flex-col bg-theme-panel backdrop-blur-xl border border-theme-border rounded-xl p-4 shadow-panel"
     >
       <audio
         ref={audioRef}
@@ -176,8 +176,8 @@ export function MusicPlayer() {
       {/* Header */}
       <div className="flex items-center justify-between mb-3 shrink-0">
         <div className="flex items-center gap-2">
-          <Music2 className="w-4 h-4 text-cabin-accent" />
-          <span className="text-sm font-medium text-white">Focus Music</span>
+          <Music2 className="w-4 h-4 text-theme-accent" />
+          <span className="text-sm font-medium text-theme-primary">Focus Music</span>
         </div>
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {isSpotifyConfigured() && (
@@ -185,8 +185,8 @@ export function MusicPlayer() {
               onClick={() => spotifyConnected ? spotifyDisconnect() : spotifyConnect()}
               className={`flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium transition-all duration-200 ${
                 spotifyConnected
-                  ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
-                  : 'bg-cabin-dim/40 text-gray-400 hover:text-white'
+                  ? 'bg-green-100 text-green-600 hover:bg-green-200'
+                  : 'bg-theme-dim text-theme-secondary hover:text-theme-primary'
               }`}
               title={spotifyConnected ? 'Disconnect Spotify' : 'Connect Spotify'}
             >
@@ -196,15 +196,15 @@ export function MusicPlayer() {
           )}
           <button
             onClick={() => setShowEq((s) => !s)}
-            className={`p-1.5 rounded transition-all duration-200 ${showEq ? 'bg-cabin-accent/20 text-cabin-accent' : 'text-gray-400 hover:text-white'}`}
+            className={`p-1.5 rounded transition-all duration-200 ${showEq ? 'bg-theme-accent-soft text-theme-accent' : 'text-theme-muted hover:text-theme-primary'}`}
           >
             <Sliders className="w-3.5 h-3.5" />
           </button>
-          <Volume2 className="w-3.5 h-3.5 text-gray-400" />
+          <Volume2 className="w-3.5 h-3.5 text-theme-muted" />
           <input
             type="range" min="0" max="1" step="0.05" value={volume}
             onChange={(e) => setVolume(parseFloat(e.target.value))}
-            className="w-16 h-1 bg-gray-700 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-cabin-accent"
+            className="w-16 h-1 bg-theme-disabled-bg rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-theme-accent"
           />
         </div>
       </div>
@@ -220,8 +220,8 @@ export function MusicPlayer() {
               onClick={() => loadGenre(g.id)}
               className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium transition-all duration-200 border ${
                 active
-                  ? 'bg-cabin-accent/20 text-cabin-accent border-cabin-accent/40 shadow-glow'
-                  : 'bg-cabin-dim/40 text-gray-400 border-transparent hover:text-gray-200'
+                  ? 'bg-theme-accent-soft text-theme-accent border-theme-accent-border shadow-glow'
+                  : 'bg-theme-dim text-theme-secondary border-transparent hover:text-theme-primary'
               }`}
             >
               <Icon className="w-3 h-3" />
@@ -235,23 +235,23 @@ export function MusicPlayer() {
       <div className="flex-1 min-h-0 flex flex-col">
         {status === 'idle' && !spotifyConnected && (
           <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
-            <Music2 className="w-10 h-10 text-gray-700 mb-3" />
-            <p className="text-xs text-gray-500 max-w-[200px]">Pick a genre to stream quiet, instrumental focus music.</p>
+            <Music2 className="w-10 h-10 text-theme-muted mb-3" />
+            <p className="text-xs text-theme-muted max-w-[200px]">Pick a genre to stream quiet, instrumental focus music.</p>
           </div>
         )}
 
         {status === 'loading' && (
           <div className="flex-1 flex flex-col items-center justify-center py-8">
-            <Loader2 className="w-8 h-8 text-cabin-accent animate-spin mb-3" />
-            <p className="text-xs text-gray-400">Loading tracks…</p>
+            <Loader2 className="w-8 h-8 text-theme-accent animate-spin mb-3" />
+            <p className="text-xs text-theme-muted">Loading tracks…</p>
           </div>
         )}
 
         {status === 'error' && !spotifyConnected && (
           <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
-            <AlertCircle className="w-8 h-8 text-amber-400/60 mb-3" />
-            <p className="text-xs text-amber-400/90">Music unavailable{error ? ` (${error})` : ''}.</p>
-            <p className="text-[10px] text-gray-600 mt-1">Available when deployed to Netlify.</p>
+            <AlertCircle className="w-8 h-8 text-amber-500/60 mb-3" />
+            <p className="text-xs text-amber-600">Music unavailable{error ? ` (${error})` : ''}.</p>
+            <p className="text-[10px] text-theme-muted mt-1">Available when deployed to Netlify.</p>
           </div>
         )}
 
@@ -264,7 +264,7 @@ export function MusicPlayer() {
                 key={spotifyActive ? spotifyTrack!.id : current?.id}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="w-20 h-20 rounded-2xl border border-white/[0.06] flex items-center justify-center mb-4 overflow-hidden shadow-glow"
+                className="w-20 h-20 rounded-2xl border border-theme-border flex items-center justify-center mb-4 overflow-hidden shadow-glow"
               >
                 {spotifyActive ? (
                   spotifyTrack!.albumArt ? (
@@ -273,15 +273,15 @@ export function MusicPlayer() {
                     <SpotifyIcon className="w-8 h-8 text-green-500/70" />
                   )
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-cabin-accent/30 to-cabin-dim/40 flex items-center justify-center">
-                    <Music2 className="w-8 h-8 text-cabin-accent/70" />
+                  <div className="w-full h-full bg-gradient-to-br from-sky-100 to-slate-100 flex items-center justify-center">
+                    <Music2 className="w-8 h-8 text-theme-accent/70" />
                   </div>
                 )}
               </motion.div>
-              <p className="text-sm font-medium text-white max-w-full truncate px-2">
+              <p className="text-sm font-medium text-theme-primary max-w-full truncate px-2">
                 {spotifyActive ? spotifyTrack!.title : current?.title}
               </p>
-              <p className="text-xs text-gray-500 max-w-full truncate px-2 mt-0.5">
+              <p className="text-xs text-theme-muted max-w-full truncate px-2 mt-0.5">
                 {spotifyActive ? spotifyTrack!.artist : current?.artist}
               </p>
               {spotifyActive && (
@@ -296,24 +296,24 @@ export function MusicPlayer() {
             <div className="flex items-center justify-center gap-3 py-3 shrink-0">
               <button
                 onClick={prev}
-                className="w-8 h-8 rounded-lg flex items-center justify-center bg-cabin-dim/40 text-gray-300 hover:text-white hover:bg-cabin-dim/60 transition-all duration-200"
+                className="w-8 h-8 rounded-lg flex items-center justify-center bg-theme-dim text-theme-secondary hover:text-theme-primary hover:bg-theme-disabled-bg transition-all duration-200"
               >
                 <SkipBack className="w-4 h-4" />
               </button>
               <button
                 onClick={toggle}
-                className="w-12 h-12 rounded-full flex items-center justify-center bg-cabin-accent/20 text-cabin-accent hover:bg-cabin-accent/30 transition-all duration-200 shadow-glow"
+                className="w-12 h-12 rounded-full flex items-center justify-center bg-theme-accent-soft text-theme-accent hover:bg-theme-accent-soft transition-all duration-200 shadow-glow"
               >
                 {buffering ? <Loader2 className="w-5 h-5 animate-spin" /> : isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
               </button>
               <button
                 onClick={next}
-                className="w-8 h-8 rounded-lg flex items-center justify-center bg-cabin-dim/40 text-gray-300 hover:text-white hover:bg-cabin-dim/60 transition-all duration-200"
+                className="w-8 h-8 rounded-lg flex items-center justify-center bg-theme-dim text-theme-secondary hover:text-theme-primary hover:bg-theme-disabled-bg transition-all duration-200"
               >
                 <SkipForward className="w-4 h-4" />
               </button>
             </div>
-            <div className="text-center text-[10px] text-gray-600 font-mono shrink-0">
+            <div className="text-center text-[10px] text-theme-muted font-mono shrink-0">
               {spotifyActive ? 'via Spotify' : `${index + 1} / ${tracks.length}`}
             </div>
           </div>
@@ -323,7 +323,7 @@ export function MusicPlayer() {
         {spotifyConnected && !spotifyTrack && status !== 'ready' && (
           <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
             <SpotifyIcon className="w-8 h-8 text-green-500/40 mb-3" />
-            <p className="text-xs text-gray-500">Connected to Spotify. Play something in Spotify to see it here.</p>
+            <p className="text-xs text-theme-muted">Connected to Spotify. Play something in Spotify to see it here.</p>
           </div>
         )}
       </div>
@@ -337,12 +337,12 @@ export function MusicPlayer() {
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden shrink-0"
           >
-            <div className="pt-3 mt-3 border-t border-white/[0.04]">
+            <div className="pt-3 mt-3 border-t border-theme-border">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] uppercase tracking-wider text-gray-500">Equalizer · Hz</span>
+                <span className="text-[10px] uppercase tracking-wider text-theme-muted">Equalizer · Hz</span>
                 <button
                   onClick={() => setEqValues([0, 0, 0, 0, 0, 0, 0])}
-                  className="text-[10px] text-gray-500 hover:text-cabin-accent transition-colors"
+                  className="text-[10px] text-theme-muted hover:text-theme-accent transition-colors"
                 >
                   Reset
                 </button>
@@ -351,9 +351,9 @@ export function MusicPlayer() {
                 {EQ_BANDS.map((band, i) => (
                   <div key={band.freq} className="flex flex-col items-center gap-1">
                     {/* Vertical slider column */}
-                    <div className="relative h-16 flex items-center justify-center bg-cabin-dim/30 rounded">
+                    <div className="relative h-16 flex items-center justify-center bg-theme-dim rounded">
                       {/* Center reference line */}
-                      <div className="absolute inset-x-1 top-1/2 h-px bg-white/[0.08]" />
+                      <div className="absolute inset-x-1 top-1/2 h-px bg-theme-border-solid" />
                       <input
                         type="range"
                         min="-12"
@@ -382,7 +382,7 @@ export function MusicPlayer() {
                       />
                     </div>
                     {/* Hz label under each column */}
-                    <span className="text-[9px] text-gray-500 font-mono leading-none">{band.label}</span>
+                    <span className="text-[9px] text-theme-muted font-mono leading-none">{band.label}</span>
                   </div>
                 ))}
               </div>

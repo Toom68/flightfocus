@@ -5,6 +5,7 @@ import L from 'leaflet';
 import { LocateFixed } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import { useFlightStore } from '@/store/flightStore';
+import { useThemeStore } from '@/store/themeStore';
 import { formatDuration } from '@/engine/simulation';
 import { formatTimeInTimezone } from '@/utils/time';
 
@@ -92,6 +93,7 @@ function FollowUpdater({
 
 export function FlightMap() {
   const { route, position, progress, arrival, simulationDate } = useFlightStore();
+  const { mode } = useThemeStore();
   const [follow, setFollow] = useState(false);
 
   if (!route) return null;
@@ -120,7 +122,7 @@ export function FlightMap() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="relative w-full h-full rounded-2xl overflow-hidden border border-white/[0.04]"
+      className="relative w-full h-full rounded-2xl overflow-hidden border border-theme-border"
     >
       <MapContainer
         center={[centerLat, centerLng]}
@@ -128,10 +130,12 @@ export function FlightMap() {
         className="w-full h-full"
         zoomControl={false}
         attributionControl={false}
-        style={{ background: '#070d1a' }}
+        style={{ background: 'var(--map-bg)' }}
       >
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          url={mode === 'dark'
+            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'}
         />
         <MapUpdater center={[centerLat, centerLng]} zoom={zoom} />
         <FollowUpdater follow={follow} setFollow={setFollow} position={[position.lat, position.lng]} />
@@ -154,15 +158,15 @@ export function FlightMap() {
       </MapContainer>
 
       <div className="absolute top-3 left-3 z-[1000] flex items-center gap-2">
-        <div className="px-2 py-1 bg-black/80 backdrop-blur-sm rounded text-xs font-mono text-cabin-accent border border-blue-900/30">
+        <div className="px-2 py-1 bg-theme-panel backdrop-blur-sm rounded text-xs font-mono text-theme-accent border border-theme-border">
           {route.departure.iata}
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-2 h-px bg-cabin-accent/40" />
-          <div className="w-1.5 h-1.5 rounded-full bg-cabin-accent/40" />
-          <div className="w-2 h-px bg-cabin-accent/40" />
+          <div className="w-2 h-px bg-theme-accent-border" />
+          <div className="w-1.5 h-1.5 rounded-full bg-theme-accent-border" />
+          <div className="w-2 h-px bg-theme-accent-border" />
         </div>
-        <div className="px-2 py-1 bg-black/80 backdrop-blur-sm rounded text-xs font-mono text-cabin-gold border border-yellow-900/30">
+        <div className="px-2 py-1 bg-theme-panel backdrop-blur-sm rounded text-xs font-mono text-theme-gold border border-theme-border">
           {route.arrival.iata}
         </div>
       </div>
@@ -172,8 +176,8 @@ export function FlightMap() {
         onClick={() => setFollow((f) => !f)}
         className={`absolute top-3 right-3 z-[1000] flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-medium transition-all duration-200 ${
           follow
-            ? 'bg-cabin-accent/30 text-cabin-accent border border-cabin-accent/40 shadow-glow'
-            : 'bg-black/80 backdrop-blur-sm text-gray-400 border border-white/[0.06] hover:text-white'
+            ? 'bg-theme-accent-soft text-theme-accent border border-theme-accent-border shadow-glow'
+            : 'bg-theme-panel backdrop-blur-sm text-theme-secondary border border-theme-border hover:text-theme-primary'
         }`}
       >
         <LocateFixed className="w-3 h-3" />
@@ -181,10 +185,10 @@ export function FlightMap() {
       </button>
 
       <div className="absolute bottom-3 left-3 right-3 z-[1000] flex items-center justify-between">
-        <span className="px-2 py-1 bg-black/80 backdrop-blur-sm rounded text-[10px] font-mono text-gray-400">
+        <span className="px-2 py-1 bg-theme-panel backdrop-blur-sm rounded text-[10px] font-mono text-theme-secondary border border-theme-border">
           {(progress * 100).toFixed(1)}%
         </span>
-        <span className="px-2 py-1 bg-black/80 backdrop-blur-sm rounded text-[10px] font-mono text-gray-400">
+        <span className="px-2 py-1 bg-theme-panel backdrop-blur-sm rounded text-[10px] font-mono text-theme-secondary border border-theme-border">
           ETA {arrivalTime}
         </span>
       </div>
